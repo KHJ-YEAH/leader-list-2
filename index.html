@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>현장 리더 명단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet" />
+<style>
+:root {
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --surface-2: #f5f4ef;
+  --border: #e6e3db;
+  --border-strong: #d5d1c5;
+  --text: #1a1816;
+  --text-2: #545049;
+  --text-3: #8b867d;
+  --muted: #b3aea2;
+
+  --accent: oklch(0.48 0.12 265);
+  --accent-soft: oklch(0.95 0.02 265);
+  --accent-text: oklch(0.35 0.14 265);
+
+  --l1: oklch(0.50 0.13 35);
+  --l1-bg: oklch(0.96 0.02 35);
+  --l2: oklch(0.48 0.12 265);
+  --l2-bg: oklch(0.96 0.02 265);
+  --l3: oklch(0.50 0.10 175);
+  --l3-bg: oklch(0.96 0.02 175);
+
+  --domestic: oklch(0.50 0.10 175);
+  --domestic-bg: oklch(0.95 0.03 175);
+  --overseas: oklch(0.48 0.12 35);
+  --overseas-bg: oklch(0.96 0.03 35);
+  --branch-bg: oklch(0.95 0.02 265);
+  --branch-text: oklch(0.35 0.14 265);
+
+  --warn: oklch(0.58 0.16 30);
+  --warn-bg: oklch(0.97 0.02 30);
+
+  --header-h: 78px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 18, 14, 0.04);
+  --shadow: 0 2px 8px rgba(20, 18, 14, 0.06);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+#root { min-height: 100vh; }
+
+.app {
+  display: grid;
+  grid-template-columns: 256px 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px 24px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 20;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.brand-mark {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--text);
+  color: var(--bg);
+  display: grid; place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+.brand-title { font-weight: 600; font-size: 14px; letter-spacing: -0.01em; }
+.brand-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+.nav { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+.nav-item {
+  all: unset; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px; border-radius: 6px;
+  font-size: 13px; color: var(--text-2);
+  transition: background 0.12s, color 0.12s;
+}
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+.nav-item.is-active { background: var(--text); color: var(--surface); }
+.nav-item.is-active .nav-count { color: rgba(255,255,255,0.7); }
+.nav-label { font-weight: 500; letter-spacing: -0.01em; }
+.nav-count { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; font-weight: 500; }
+.nav-divider { height: 1px; background: var(--border); margin: 8px 4px; }
+
+.legend {
+  margin-top: 18px;
+  padding: 12px 10px;
+  background: var(--surface-2);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.legend-title { font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+.legend-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; line-height: 1.4; }
+.chip {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 3px; flex-shrink: 0;
+}
+.chip-l1 { background: var(--l1-bg); color: var(--l1); }
+.chip-l2 { background: var(--l2-bg); color: var(--l2); }
+.chip-l3 { background: var(--l3-bg); color: var(--l3); }
+
+.kubun-chip {
+  display: inline-block;
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 3px;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.kubun-국내현장 { background: var(--domestic-bg); color: var(--domestic); }
+.kubun-국내지사 { background: var(--domestic-bg); color: var(--domestic); }
+.kubun-해외현장 { background: var(--overseas-bg); color: var(--overseas); }
+.kubun-해외지사 { background: var(--overseas-bg); color: var(--overseas); }
+.kubun-해외법인 { background: var(--overseas-bg); color: var(--overseas); }
+
+/* ---------- Main ---------- */
+.main { display: flex; flex-direction: column; min-width: 0; }
+
+.header {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px;
+  padding: 18px 32px 14px;
+  background: rgba(250, 250, 247, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  min-height: var(--header-h);
+}
+.crumb { display: flex; gap: 6px; font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
+.crumb-sep { color: var(--muted); }
+.crumb-current { color: var(--text-2); font-weight: 500; }
+.title { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+
+.title-row {
+  display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;
+}
+.title-stats {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding-bottom: 2px;
+}
+.title-stat {
+  display: inline-flex; align-items: baseline; gap: 5px;
+  font-size: 12px; color: var(--text-3);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.title-stat-value {
+  font-size: 15px; font-weight: 600;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.title-stat.tone-l1 .title-stat-value { color: var(--l1); }
+.title-stat.tone-l2 .title-stat-value { color: var(--l2); }
+.title-stat.tone-l3 .title-stat-value { color: var(--l3); }
+.title-stat-sep { color: var(--muted); font-size: 11px; }
+
+.header-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.search {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 10px; height: 34px;
+  background: var(--surface);
+  border: 1px solid var(--border); border-radius: 6px;
+  width: 240px; color: var(--text-3);
+  transition: border 0.12s;
+}
+.search:focus-within { border-color: var(--accent); color: var(--text); }
+.search input { all: unset; flex: 1; font-size: 13px; color: var(--text); font-family: inherit; }
+.search input::placeholder { color: var(--text-3); }
+.search-clear {
+  all: unset; cursor: pointer; width: 18px; height: 18px;
+  border-radius: 4px; display: grid; place-items: center;
+  color: var(--text-3); font-size: 16px; line-height: 1;
+}
+.search-clear:hover { background: var(--surface-2); color: var(--text); }
+
+.view-toggle {
+  display: flex; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 2px;
+}
+.view-toggle button {
+  all: unset; cursor: pointer;
+  padding: 4px 12px; font-size: 12px; color: var(--text-3);
+  border-radius: 4px; font-weight: 500; transition: all 0.12s;
+}
+.view-toggle button.is-active { background: var(--text); color: var(--surface); }
+
+.kubun-toggle {
+  display: flex; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 2px; gap: 1px;
+}
+.kubun-toggle button {
+  all: unset; cursor: pointer;
+  padding: 4px 10px; font-size: 12px; color: var(--text-3);
+  border-radius: 4px; font-weight: 500; transition: all 0.12s;
+}
+.kubun-toggle button.is-active { background: var(--text); color: var(--surface); }
+
+.btn-ghost, .btn-primary {
+  all: unset; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 12px; height: 34px;
+  border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  transition: all 0.12s;
+}
+.btn-ghost {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text-2);
+}
+.btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
+.btn-ghost.is-on {
+  background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text);
+}
+.btn-warn { color: var(--warn) !important; }
+.btn-warn:hover { background: var(--warn-bg); border-color: var(--warn) !important; }
+.btn-primary {
+  background: var(--text); color: var(--surface);
+  border: 1px solid var(--text);
+}
+.btn-primary:hover { background: #000; }
+
+/* ---------- Content ---------- */
+.content { padding: 20px 32px 40px; flex: 1; min-width: 0; }
+.empty { padding: 60px 0; text-align: center; color: var(--text-3); font-size: 14px; }
+
+/* ---------- Table ---------- */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: visible;
+  box-shadow: var(--shadow-sm);
+}
+.org-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  table-layout: fixed;
+}
+.org-table thead {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 10;
+}
+.org-table thead th {
+  background: var(--surface-2);
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-2);
+  letter-spacing: -0.01em;
+  vertical-align: top;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-strong);
+  box-shadow: 0 1px 0 var(--border-strong);
+}
+.org-table thead th:first-child { border-top-left-radius: 10px; }
+.org-table thead th:last-child { border-top-right-radius: 10px; border-right: 0; }
+.th-center { text-align: center !important; }
+.th-chip {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 6px; border-radius: 3px;
+}
+.th-sub {
+  display: block; margin-top: 4px;
+  font-size: 10px; font-weight: 400; color: var(--text-3);
+  letter-spacing: 0; line-height: 1.3;
+}
+
+.org-table tbody td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  vertical-align: top;
+  background: var(--surface);
+}
+.org-table tbody td:last-child { border-right: 0; }
+.org-table tbody tr.bonbu-start td { border-top: 2px solid var(--border-strong); }
+.org-table tbody tr:first-child td { border-top: 0; }
+
+.cell-bonbu {
+  background: var(--surface-2) !important;
+  border-right: 1px solid var(--border-strong) !important;
+}
+.bonbu-cell { padding: 4px 0; position: sticky; top: calc(var(--header-h) + 70px); }
+.bonbu-name {
+  font-size: 14px; font-weight: 600;
+  color: var(--text); letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.bonbu-meta {
+  font-size: 11px; color: var(--text-3);
+  display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+}
+.dot-sep { color: var(--muted); }
+.bonbu-breakdown {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-3);
+  display: flex; flex-wrap: wrap;
+  gap: 3px; align-items: baseline; line-height: 1.4;
+}
+.bonbu-breakdown .bb-l2 { color: var(--l2); font-weight: 500; }
+.bonbu-breakdown .bb-l3 { color: var(--l3); font-weight: 500; }
+.bonbu-breakdown .bb-staff { color: var(--text-2); font-weight: 500; }
+.bonbu-breakdown .bb-sep { color: var(--muted); }
+.bonbu-kubun-counts {
+  margin-top: 8px;
+  display: flex; flex-direction: column; gap: 3px;
+  font-size: 10px;
+}
+.bonbu-kubun-row {
+  display: flex; justify-content: space-between; gap: 6px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-site {
+  background: #fdfcfa;
+}
+.site-row {
+  display: flex; flex-direction: column;
+  gap: 4px;
+}
+.site-name {
+  font-size: 13px; font-weight: 500; color: var(--text);
+  letter-spacing: -0.005em;
+  line-height: 1.35;
+}
+.site-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.site-bonbu-breakdown {
+  font-size: 10px;
+  color: var(--text-3);
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.site-bonbu-breakdown .sb-item { white-space: nowrap; }
+.site-bonbu-breakdown .sb-sep { color: var(--muted); }
+
+.cell-count {
+  text-align: center !important;
+  font-variant-numeric: tabular-nums;
+}
+.member-count {
+  display: inline-block;
+  min-width: 28px;
+  padding: 2px 8px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.cell-count.is-small {
+  background: oklch(0.97 0.06 95) !important;
+}
+.cell-count.is-small .member-count {
+  background: oklch(0.93 0.10 95);
+  color: oklch(0.40 0.12 60);
+}
+
+/* ---------- Modal ---------- */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(20, 18, 14, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: grid; place-items: center;
+  padding: 32px;
+  animation: fadeIn 0.15s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 980px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.modal-head {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px;
+}
+.modal-title {
+  font-size: 16px; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--text);
+}
+.modal-sub { font-size: 12px; color: var(--text-3); margin-top: 4px; line-height: 1.5; }
+.modal-close {
+  all: unset; cursor: pointer;
+  width: 32px; height: 32px;
+  border-radius: 6px; display: grid; place-items: center;
+  font-size: 22px; color: var(--text-3);
+  font-weight: 300;
+}
+.modal-close:hover { background: var(--surface-2); color: var(--text); }
+
+.modal-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+.modal-tabs {
+  border-right: 1px solid var(--border);
+  background: var(--surface-2);
+  padding: 8px;
+  display: flex; flex-direction: column;
+  gap: 1px;
+  overflow-y: auto;
+}
+.modal-tab {
+  all: unset; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
+  transition: background 0.12s, color 0.12s;
+}
+.modal-tab:hover { background: var(--surface); color: var(--text); }
+.modal-tab.is-active {
+  background: var(--text);
+  color: var(--surface);
+}
+.modal-tab.is-active .modal-tab-count { color: rgba(255,255,255,0.7); }
+.modal-tab-count {
+  font-size: 11px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.modal-tab-group { display: flex; flex-direction: column; gap: 1px; margin-bottom: 8px; }
+.modal-tab-group:last-child { margin-bottom: 0; }
+.modal-tab-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  padding: 8px 12px 4px;
+  text-transform: uppercase;
+}
+
+.modal-content {
+  padding: 18px 24px 24px;
+  overflow-y: auto;
+}
+.modal-section-head {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 4px;
+}
+.modal-section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.modal-section-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.modal-section-note {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+.modal-empty {
+  padding: 40px 20px;
+  text-align: center;
+  background: var(--surface-2);
+  border-radius: 8px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+.modal-empty-icon {
+  font-size: 32px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.modal-empty-sub {
+  font-size: 11px;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.modal-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  position: sticky; top: 0;
+}
+.modal-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+.modal-table tbody tr:hover td { background: var(--surface-2); }
+.modal-tnum {
+  color: var(--text-3) !important;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+.modal-tname { font-weight: 600; }
+.modal-tdept { color: var(--text-2); font-size: 12px; }
+
+/* ---------- Leader cells ---------- */
+.leaders-stack {
+  display: flex; flex-direction: column;
+  gap: 0;
+}
+.leaders-stack > .leader + .leader {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+.leader { display: flex; align-items: flex-start; gap: 8px; padding: 2px 0; }
+.leader-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+.leader-dot.dot-l1 { background: var(--l1); }
+.leader-dot.dot-l2 { background: var(--l2); }
+.leader-dot.dot-l3 { background: var(--l3); }
+.leader-text { min-width: 0; flex: 1; }
+.leader-name {
+  font-weight: 600; font-size: 13px; color: var(--text);
+  letter-spacing: -0.01em;
+}
+.leader-rank { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.leader-title-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  margin-left: 5px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  border-radius: 3px;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+.leader-empty { color: var(--muted); font-size: 12px; }
+.leader-empty .leader-empty-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-weight: 500;
+}
+.cell-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 8px 14px; }
+
+/* L1 lanes (sub-leader branches) */
+.l1-lanes { position: relative; width: 100%; height: 100%; min-height: 100%; }
+.cell-l1 { position: relative; padding: 0 !important; }
+.cell-l1 > .l1-lanes { padding: 10px 14px; }
+.lane-main { display: flex; align-items: flex-start; width: calc(50% - 8px); padding-right: 8px; }
+.l1-lanes-solo > .lane-main { width: 100%; }
+.lane-branch {
+  position: absolute;
+  right: 14px;
+  width: calc(50% - 14px);
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0 8px 12px;
+  border-left: 1.5px dashed var(--border-strong);
+}
+.lane-branch::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  background: var(--border-strong);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+.sub-leader-note { font-size: 10px; color: var(--text-3); margin-top: 2px; font-style: italic; }
+
+mark { background: oklch(0.92 0.10 95); color: var(--text); padding: 0 1px; border-radius: 2px; }
+
+/* ---------- Editable ---------- */
+.edit-mode .editable {
+  display: inline-block;
+  min-width: 24px;
+  padding: 0 4px;
+  margin: 0 -4px;
+  border-radius: 4px;
+  outline: 1px dashed var(--border-strong);
+  outline-offset: 1px;
+  cursor: text;
+  transition: outline-color 0.12s, background 0.12s;
+}
+.edit-mode .editable:hover { outline-color: var(--accent); background: var(--accent-soft); }
+.edit-mode .editable.is-editing { outline: 2px solid var(--accent); background: var(--surface); }
+.edit-mode .editable.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+/* ---------- Grid View ---------- */
+.grid-view {
+  display: grid; gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+}
+.card-bonbu {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.card-bonbu-head {
+  padding: 16px 18px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; gap: 16px;
+}
+.card-bonbu-title { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
+.card-bonbu-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.card-bonbu-l1 { text-align: right; }
+.card-l1-label {
+  font-size: 10px; font-weight: 600; color: var(--l1);
+  margin-bottom: 2px; letter-spacing: 0.02em;
+}
+.card-l1-name { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.card-l1-name.muted { color: var(--muted); }
+.card-l1-rank { font-size: 11px; color: var(--text-3); font-weight: 400; margin-left: 4px; }
+.card-sub-note { font-size: 10px; color: var(--text-3); font-style: italic; margin-top: 1px; }
+
+.card-sites { padding: 6px 0; }
+.card-site {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 18px;
+}
+.card-site:first-child { border-top: 0; }
+.card-site-head {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.card-site-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
+.card-site-meta { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.card-site-cnt {
+  font-size: 11px; font-weight: 600;
+  padding: 2px 8px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+  height: fit-content;
+  white-space: nowrap;
+}
+.card-leaders {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+.card-leader-col-title {
+  font-size: 10px; font-weight: 600;
+  color: var(--text-3); letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+.card-leader-row {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; line-height: 1.3;
+  padding: 1px 0;
+}
+.card-leader-row + .card-leader-row { margin-top: 2px; }
+.card-leader-row .dot { width: 5px; height: 5px; border-radius: 50%; }
+.card-leader-row .dot-l2 { background: var(--l2); }
+.card-leader-row .dot-l3 { background: var(--l3); }
+.card-leader-row .l-name { font-weight: 600; color: var(--text); }
+.card-leader-row .l-rank { color: var(--text-3); font-size: 11px; }
+.card-leader-row .muted { color: var(--muted); }
+.dot { width: 5px; height: 5px; border-radius: 50%; }
+
+/* ---------- Stat tones ---------- */
+.stat-l1 .stat-value { color: var(--l1); }
+.stat-l2 .stat-value { color: var(--l2); }
+.stat-l3 .stat-value { color: var(--l3); }
+
+/* ---------- Footer ---------- */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 18px 32px 24px;
+  background: var(--surface);
+}
+.footer-stats { display: flex; gap: 28px; margin-bottom: 8px; flex-wrap: wrap; }
+.stat { display: flex; flex-direction: column; }
+.stat-value {
+  font-size: 22px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text); letter-spacing: -0.02em; line-height: 1;
+}
+.stat-label { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+.footer-note { font-size: 11px; color: var(--text-3); margin-top: 8px; }
+
+/* ---------- Print ---------- */
+@media print {
+  .sidebar, .header, .footer, .view-toggle, .btn-ghost, .btn-primary, .search, .kubun-toggle, .modal-backdrop { display: none !important; }
+  .app { display: block; }
+  .content { padding: 16px; }
+  .org-table { font-size: 10px; }
+  .org-table th, .org-table td { padding: 6px 8px; }
+  .org-table thead { position: static !important; }
+  body { background: white; }
+  .table-wrap { box-shadow: none; }
+  .bonbu-cell { position: static; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .header { flex-direction: column; align-items: stretch; padding: 16px; }
+  .header-r { flex-wrap: wrap; }
+  .content { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script>
+window.FIELD_ORG_DATA = [{"bonbu":"토목사업본부","leader1":{"name":"임낙호","rank":"상무","title":"본부장","empNo":"9601404","dept":"토목사업본부"},"subLeaders":[],"sites":[{"site":"19-대미-왜관전기시설 개선 시설공사","originalSite":"19-대미-왜관전기시설 개선 시설공사","kubun":"국내현장","memberCount":16,"bonbuBreakdown":{"재경본부":2,"토목사업본부":13,"안전품질본부":1},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"이성희","rank":"책임매니저","title":"국내현장소장","empNo":"9504955"}]},{"site":"강북정수장 증설공사","originalSite":"강북정수장 증설공사","kubun":"국내현장","memberCount":19,"bonbuBreakdown":{"재경본부":3,"토목사업본부":11,"안전품질본부":5},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"정성민","rank":"책임매니저","title":"국내현장소장","empNo":"9707146"}]},{"site":"검단~경명로간 도로신설 및 인천공항고속도로 연결도로 건설공사","originalSite":"검단~경명로간 도로신설 및 인천공항고속도로 연결도로 건설공사","kubun":"국내현장","memberCount":18,"bonbuBreakdown":{"토목사업본부":13,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"서한용","rank":"책임매니저","title":"국내현장소장","empNo":"0200566"}]},{"site":"경부고속선 안전취약개소(대전북연결선) 제2공구","originalSite":"경부고속선 안전취약개소(대전북연결선) 제2공구","kubun":"국내현장","memberCount":15,"bonbuBreakdown":{"토목사업본부":10,"재경본부":2,"안전품질본부":3},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"노시현","rank":"책임매니저","title":"국내현장소장","empNo":"9700533"}]},{"site":"경원선남측구간(백마고지-월정리)철도복원","originalSite":"경원선남측구간(백마고지-월정리)철도복원","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"토목사업본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[]},{"site":"계양강화(5공구)","originalSite":"계양~강화 고속국도 건설공사(제5공구)","kubun":"국내현장","memberCount":8,"bonbuBreakdown":{"토목사업본부":6,"재경본부":1,"안전품질본부":1},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"방영호","rank":"책임매니저","title":"국내현장소장","empNo":"0000961"}]},{"site":"고속국도 제400호선 김포~파주간 건설공사(제2공구)","originalSite":"고속국도 제400호선 김포~파주간 건설공사(제2공구)","kubun":"국내현장","memberCount":39,"bonbuBreakdown":{"토목사업본부":28,"재경본부":4,"안전품질본부":7},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"안병철","rank":"책임매니저","title":"국내현장소장","empNo":"9505234"}]},{"site":"공공기여 대상사업 직접제공시설공사 1공구","originalSite":"공공기여 대상사업 직접제공시설공사 1공구","kubun":"국내현장","memberCount":24,"bonbuBreakdown":{"토목사업본부":17,"안전품질본부":6,"재경본부":1},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"박수호","rank":"책임매니저","title":"국내현장소장","empNo":"9400401"}]},{"site":"공공기여 대상사업 직접제공시설공사 2공구","originalSite":"공공기여 대상사업 직접제공시설공사 2공구","kubun":"국내현장","memberCount":23,"bonbuBreakdown":{"재경본부":3,"토목사업본부":14,"안전품질본부":6},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"남하용","rank":"책임매니저","title":"국내현장소장","empNo":"0000362"}]},{"site":"광양일반폐기물처리장조성사업","originalSite":"광양일반폐기물처리장조성사업","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"안전품질본부":1},"leader2":[],"leader3":[]},{"site":"광양항 광역 준설토투기장 조성공사","originalSite":"광양항 광역 준설토투기장 조성공사","kubun":"국내현장","memberCount":16,"bonbuBreakdown":{"토목사업본부":10,"안전품질본부":5,"재경본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"나희주","rank":"책임매니저","title":"국내현장소장","empNo":"9504561"}]},{"site":"군산항 준설토 투기장(1공구)","originalSite":"군산항 준설토 투기장(1공구)","kubun":"국내현장","memberCount":13,"bonbuBreakdown":{"재경본부":2,"토목사업본부":8,"안전품질본부":3},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"김상훈","rank":"책임매니저","title":"국내현장소장","empNo":"9800781"}]},{"site":"남양주왕숙 공공주택지구 조성공사 1공구","originalSite":"남양주왕숙 공공주택지구 조성공사 1공구","kubun":"국내현장","memberCount":13,"bonbuBreakdown":{"토목사업본부":9,"안전품질본부":3,"재경본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"이광철","rank":"책임매니저","title":"국내현장소장","empNo":"9707474"}]},{"site":"남양주왕숙 국도47호선 이설(지하화) 공사","originalSite":"남양주왕숙 국도47호선 이설(지하화) 공사","kubun":"국내현장","memberCount":40,"bonbuBreakdown":{"재경본부":4,"토목사업본부":26,"안전품질본부":10},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"양승범","rank":"책임매니저","title":"국내현장소장","empNo":"9705026"}]},{"site":"대곡역 시설개량 공사","originalSite":"대곡역 시설개량 공사","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"토목사업본부":1,"안전품질본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[]},{"site":"대장~홍대 광역철도 민간투자사업 1공구","originalSite":"대장~홍대 광역철도 민간투자사업 1공구","kubun":"국내현장","memberCount":16,"bonbuBreakdown":{"재경본부":4,"토목사업본부":7,"안전품질본부":5},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"김태호","rank":"책임매니저","title":"국내현장소장","empNo":"9901255"}]},{"site":"대장~홍대 광역철도 민간투자사업 2공구","originalSite":"대장~홍대 광역철도 민간투자사업 2공구","kubun":"국내현장","memberCount":6,"bonbuBreakdown":{"토목사업본부":5,"안전품질본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"정연성","rank":"책임매니저","title":"국내현장소장","empNo":"0000171"}]},{"site":"대장~홍대 광역철도 민간투자사업 4공구","originalSite":"대장~홍대 광역철도 민간투자사업 4공구","kubun":"국내현장","memberCount":11,"bonbuBreakdown":{"토목사업본부":6,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"이동훤","rank":"책임매니저","title":"국내현장소장","empNo":"9504966"}]},{"site":"대장홍대 광역철도 민간투자사업 사업단","originalSite":"대장홍대 광역철도 민간투자사업 사업단","kubun":"국내현장","memberCount":7,"bonbuBreakdown":{"토목사업본부":6,"재경본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"박성진","rank":"책임매니저","title":"단장","empNo":"9901281"}]},{"site":"동부간선도로 지하화 민간투자사업 건설공사 3공구","originalSite":"동부간선도로 지하화 민간투자사업 건설공사 3공구","kubun":"국내현장","memberCount":15,"bonbuBreakdown":{"재경본부":2,"토목사업본부":9,"안전품질본부":4},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"김기진","rank":"책임매니저","title":"국내현장소장","empNo":"9707452"}]},{"site":"부산 에코델타시티 3단계 제3공구 조성공사","originalSite":"부산 에코델타시티 3단계 제3공구 조성공사","kubun":"국내현장","memberCount":15,"bonbuBreakdown":{"토목사업본부":9,"안전품질본부":4,"재경본부":2},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"이경찬","rank":"책임매니저","title":"국내현장소장","empNo":"0200783"}]},{"site":"부산진해경제자유구역 와성지구 개발사업","originalSite":"부산진해경제자유구역 와성지구 개발사업","kubun":"국내현장","memberCount":19,"bonbuBreakdown":{"토목사업본부":13,"재경본부":2,"안전품질본부":4},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"정윤석","rank":"책임매니저","title":"국내현장소장","empNo":"9603115"}]},{"site":"부산항 진해신항 남방파제(1단계)","originalSite":"부산항 진해신항 남방파제(1단계)","kubun":"국내현장","memberCount":15,"bonbuBreakdown":{"토목사업본부":9,"안전품질본부":5,"재경본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"한윤호","rank":"책임매니저","title":"국내현장소장","empNo":"0201216"}]},{"site":"부산항 진해신항 컨테이너부두 1-1단계(1공구) 축조공사","originalSite":"부산항 진해신항 컨테이너부두 1-1단계(1공구) 축조공사","kubun":"국내현장","memberCount":22,"bonbuBreakdown":{"안전품질본부":11,"토목사업본부":9,"재경본부":2},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"김성열","rank":"책임매니저","title":"국내현장소장","empNo":"9601393"}]},{"site":"서부간선지하도로 민간투자사업 관리운영위수탁","originalSite":"서부간선지하도로 민간투자사업 관리운영위수탁","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"토목사업본부":1},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[]},{"site":"서산 현대차 직선주행시험로 기반시설","originalSite":"서산 현대차 직선주행시험로 기반시설","kubun":"국내현장","memberCount":9,"bonbuBreakdown":{"토목사업본부":6,"안전품질본부":2,"재경본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"채흥묵","rank":"책임매니저","title":"국내현장소장","empNo":"9707264"}]},{"site":"서울-세종고속도로 안성-구리건설공사 [제14공구]","originalSite":"서울-세종고속도로 안성-구리건설공사 [제14공구]","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"토목사업본부":1},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[]},{"site":"수도권광역급행철도 B노선 민간투자사업 건설공사 제4공구","originalSite":"수도권광역급행철도 B노선 민간투자사업 건설공사 제4공구","kubun":"국내현장","memberCount":16,"bonbuBreakdown":{"토목사업본부":10,"안전품질본부":3,"재경본부":3},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"박명환","rank":"책임매니저","title":"국내현장소장","empNo":"0000935"}]},{"site":"수도권광역급행철도 B노선(용산~상봉) 제1공구 노반신설 기타공사","originalSite":"수도권광역급행철도 B노선(용산~상봉) 제1공구 노반신설 기타공사","kubun":"국내현장","memberCount":19,"bonbuBreakdown":{"토목사업본부":10,"재경본부":3,"안전품질본부":6},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"이동찬","rank":"책임매니저","title":"국내현장소장","empNo":"9700430"}]},{"site":"수도권광역급행철도 C노선 민간투자시설사업 건설공사 1공구","originalSite":"수도권광역급행철도 C노선 민간투자시설사업 건설공사 1공구","kubun":"국내현장","memberCount":4,"bonbuBreakdown":{"토목사업본부":3,"안전품질본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"강윤석","rank":"책임매니저","title":"국내현장소장","empNo":"9706322"}]},{"site":"수도권광역급행철도 C노선 민간투자시설사업 건설공사 3공구","originalSite":"수도권광역급행철도 C노선 민간투자시설사업 건설공사 3공구","kubun":"국내현장","memberCount":7,"bonbuBreakdown":{"토목사업본부":5,"재경본부":1,"안전품질본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"이민상","rank":"책임매니저","title":"국내현장소장","empNo":"9900785"}]},{"site":"수도권광역급행철도 C노선 민간투자시설사업 건설공사 4공구","originalSite":"수도권광역급행철도 C노선 민간투자시설사업 건설공사 4공구","kubun":"국내현장","memberCount":5,"bonbuBreakdown":{"토목사업본부":5},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"배종선","rank":"책임매니저","title":"국내현장소장","empNo":"9801410"}]},{"site":"수도권광역급행철도 C노선 민간투자시설사업 사업단","originalSite":"수도권광역급행철도 C노선 민간투자시설사업 사업단","kubun":"국내현장","memberCount":5,"bonbuBreakdown":{"토목사업본부":5},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"신중기","rank":"책임매니저","title":"단장","empNo":"9706311"}]},{"site":"시흥시 클린에너지센터 민간투자사업 관리운영","originalSite":"시흥시 클린에너지센터 민간투자사업 관리운영","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"토목사업본부":1},"leader2":[{"name":"김기영","rank":"상무","title":"실장","empNo":"0001001","dept":"토목영업실"}],"leader3":[]},{"site":"신안우이 해상풍력 발전사업","originalSite":"신안우이 해상풍력 발전사업","kubun":"국내현장","memberCount":18,"bonbuBreakdown":{"토목사업본부":14,"안전품질본부":2,"재경본부":2},"leader2":[{"name":"김기영","rank":"상무","title":"실장","empNo":"0001001","dept":"토목영업실"}],"leader3":[{"name":"김현일","rank":"책임매니저","title":"국내현장실장","empNo":"9800755"}]},{"site":"신월빗물저류시설 실증인프라 구축공사","originalSite":"신월빗물저류시설 실증인프라 구축공사","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"안전품질본부":1},"leader2":[],"leader3":[]},{"site":"영동대로 지하공간 복합개발 2공구 건설공사","originalSite":"영동대로 지하공간 복합개발 2공구 건설공사","kubun":"국내현장","memberCount":25,"bonbuBreakdown":{"토목사업본부":16,"재경본부":3,"안전품질본부":6},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[{"name":"박민우","rank":"책임매니저","title":"국내현장소장","empNo":"9901270"}]},{"site":"영동대로 지하공간 복합개발 3공구 건설공사","originalSite":"영동대로 지하공간 복합개발 3공구 건설공사","kubun":"국내현장","memberCount":19,"bonbuBreakdown":{"토목사업본부":12,"안전품질본부":5,"재경본부":2},"leader2":[{"name":"이화섭","rank":"상무","title":"PD","empNo":"9800932","dept":"토목사업본부"}],"leader3":[]},{"site":"울산신항 남방파제(1-2공구) 보강공사","originalSite":"울산신항 남방파제(1-2공구) 보강공사","kubun":"국내현장","memberCount":7,"bonbuBreakdown":{"토목사업본부":4,"안전품질본부":2,"재경본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"채창석","rank":"책임매니저","title":"국내현장소장","empNo":"9801196"}]},{"site":"월곶~판교 복선전철 제6공구 건설공사","originalSite":"월곶~판교 복선전철 제6공구 건설공사","kubun":"국내현장","memberCount":25,"bonbuBreakdown":{"토목사업본부":17,"재경본부":3,"안전품질본부":5},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"유성훈","rank":"책임매니저","title":"국내현장소장","empNo":"9505164"}]},{"site":"이천문경간철도","originalSite":"이천문경간철도","kubun":"국내현장","memberCount":8,"bonbuBreakdown":{"안전품질본부":2,"토목사업본부":5,"재경본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[]},{"site":"인제군 통합 바이오가스 실증시설","originalSite":"인제군 통합 바이오가스 실증시설","kubun":"국내현장","memberCount":3,"bonbuBreakdown":{"토목사업본부":1,"안전품질본부":1,"기술연구원":1},"leader2":[],"leader3":[]},{"site":"인천계양 국도39호선(벌말로) 확장공사(부천·서울)","originalSite":"인천계양 국도39호선(벌말로) 확장공사(부천·서울)","kubun":"국내현장","memberCount":12,"bonbuBreakdown":{"토목사업본부":7,"안전품질본부":3,"재경본부":2},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[{"name":"송충선","rank":"책임매니저","title":"국내현장소장","empNo":"9800921"}]},{"site":"인천신항 1-2단계 컨테이너부두 하부공 축조공사","originalSite":"인천신항 1-2단계 컨테이너부두 하부공 축조공사","kubun":"국내현장","memberCount":5,"bonbuBreakdown":{"토목사업본부":4,"재경본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"박성민","rank":"책임매니저","title":"국내현장소장","empNo":"9604083"}]},{"site":"태안기업도시 기반시설공사(4차)","originalSite":"태안기업도시 기반시설공사(4차)","kubun":"국내현장","memberCount":8,"bonbuBreakdown":{"토목사업본부":6,"재경본부":1,"안전품질본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"박준영","rank":"책임매니저","title":"국내현장소장","empNo":"9505971"}]},{"site":"포천양수발전소 토건공사1,2호기","originalSite":"포천양수발전소 1,2호기 토건공사","kubun":"국내현장","memberCount":10,"bonbuBreakdown":{"토목사업본부":8,"재경본부":1,"안전품질본부":1},"leader2":[{"name":"김기영","rank":"상무","title":"실장","empNo":"0001001","dept":"토목영업실"}],"leader3":[{"name":"박경호","rank":"책임매니저","title":"국내현장소장","empNo":"9700345"}]},{"site":"하남감일지구 사업단","originalSite":"하남감일 공공주택지구 조성사업","kubun":"국내현장","memberCount":5,"bonbuBreakdown":{"토목사업본부":2,"재경본부":1,"안전품질본부":2},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[]},{"site":"한강교량 신설 및 올림픽대로 확장공사","originalSite":"한강교량 신설 및 올림픽대로 확장공사","kubun":"국내현장","memberCount":4,"bonbuBreakdown":{"토목사업본부":3,"재경본부":1},"leader2":[{"name":"박홍철","rank":"상무","title":"PD","empNo":"9501263","dept":"토목사업본부"}],"leader3":[]},{"site":"한국타이어 Technoring 추가공사","originalSite":"한국타이어 Technoring 추가공사","kubun":"국내현장","memberCount":4,"bonbuBreakdown":{"토목사업본부":2,"안전품질본부":1,"재경본부":1},"leader2":[{"name":"송호근","rank":"책임매니저","title":"PD","empNo":"0000755","dept":"토목사업본부"}],"leader3":[{"name":"임현정","rank":"책임매니저","title":"국내현장소장","empNo":"9505116"}]},{"site":"미국 전기로 제철소 부지조성 공사","originalSite":"미국 전기로 제철소 부지조성 공사","kubun":"해외현장","memberCount":13,"bonbuBreakdown":{"안전품질본부":1,"토목사업본부":12},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[{"name":"연정준","rank":"책임매니저","title":"해외현장소장","empNo":"0000700"}]},{"site":"베트남 하노이 메트로 3호선 CP03","originalSite":"베트남 하노이 메트로 3호선 CP03","kubun":"해외현장","memberCount":13,"bonbuBreakdown":{"토목사업본부":12,"재경본부":1},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[{"name":"박영일","rank":"책임매니저","title":"해외현장소장","empNo":"9704773"}]},{"site":"싱가포르 남북도로(NSC) N113,N115 건설 공사","originalSite":"싱가포르 남북도로(NSC) N113,N115 건설 공사","kubun":"해외현장","memberCount":29,"bonbuBreakdown":{"토목사업본부":25,"재경본부":3,"안전품질본부":1},"leader2":[{"name":"이용정","rank":"상무","title":"실장","empNo":"9800814","dept":"토목견적실"}],"leader3":[{"name":"강한성","rank":"책임매니저","title":"해외현장소장","empNo":"9800792"}]},{"site":"싱가포르 테콩섬 매립공사 2단계 공사","originalSite":"싱가포르 테콩섬 매립공사 2단계 공사","kubun":"해외현장","memberCount":10,"bonbuBreakdown":{"토목사업본부":10},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[{"name":"양해섭","rank":"책임매니저","title":"해외현장소장","empNo":"9901312"}]},{"site":"싱가포르 투아스 핑거3 매립공사","originalSite":"싱가포르 투아스 핑거3 매립공사","kubun":"해외현장","memberCount":6,"bonbuBreakdown":{"재경본부":2,"토목사업본부":4},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[{"name":"김광섭","rank":"책임매니저","title":"해외현장소장","empNo":"0000336"}]},{"site":"싱가포르 Tuas 서부해안 인프라공사","originalSite":"싱가포르 Tuas 서부해안 인프라공사","kubun":"해외현장","memberCount":1,"bonbuBreakdown":{"토목사업본부":1},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[]},{"site":"이라크 해수처리시설 부지조성 공사","originalSite":"이라크 해수처리시설 부지조성 공사","kubun":"해외현장","memberCount":11,"bonbuBreakdown":{"토목사업본부":11},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[{"name":"고병현","rank":"책임매니저","title":"해외현장소장","empNo":"9601290"}]},{"site":"인도네시아 Peusangan 수력발전소 공사","originalSite":"인도네시아 Peusangan 수력발전소 공사","kubun":"해외현장","memberCount":5,"bonbuBreakdown":{"토목사업본부":4,"재경본부":1},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[{"name":"이홍우","rank":"책임매니저","title":"해외현장소장","empNo":"1201636"}]},{"site":"칠레 차카오 교량 공사","originalSite":"칠레 차카오 교량 공사","kubun":"해외현장","memberCount":43,"bonbuBreakdown":{"토목사업본부":39,"재경본부":4},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[{"name":"이인복","rank":"책임매니저","title":"해외현장소장","empNo":"9945091"}]},{"site":"카타르 루사일 고속도로 건설공사 현장","originalSite":"카타르 루사일 고속도로 건설공사 현장","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"토목사업본부":2},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[]},{"site":"카타르 TSE 저류조 공사","originalSite":"카타르 TSE 저류조 공사","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"토목사업본부":2},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[{"name":"한수열","rank":"책임매니저","title":"해외현장소장","empNo":"0201205"}]},{"site":"쿠웨이트 슈와이크 항만 개보수 공사","originalSite":"쿠웨이트 슈와이크 항만 개보수 공사","kubun":"해외현장","memberCount":5,"bonbuBreakdown":{"토목사업본부":4,"재경본부":1},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[{"name":"이길형","rank":"책임매니저","title":"해외현장소장","empNo":"9501090"}]},{"site":"파나마 메트로 3호선","originalSite":"파나마 메트로 3호선","kubun":"해외현장","memberCount":67,"bonbuBreakdown":{"토목사업본부":54,"건축주택사업본부":1,"재경본부":10,"안전품질본부":2},"leader2":[{"name":"홍재혁","rank":"상무","title":"PD","empNo":"0201242","dept":"토목사업본부"}],"leader3":[{"name":"김영호","rank":"상무","title":"해외현장실장","empNo":"9505260"}]},{"site":"필리핀 남부철도 제4,5,6공구","originalSite":"필리핀 남부철도 제4,5,6공구","kubun":"해외현장","memberCount":61,"bonbuBreakdown":{"토목사업본부":52,"재경본부":6,"안전품질본부":3},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[{"name":"정형태","rank":"책임매니저","title":"해외현장소장","empNo":"9501101"}]},{"site":"필리핀 남북철도 제1공구","originalSite":"필리핀 남북철도 제1공구","kubun":"해외현장","memberCount":19,"bonbuBreakdown":{"토목사업본부":15,"재경본부":3,"안전품질본부":1},"leader2":[{"name":"이갑열","rank":"상무","title":"PD","empNo":"9700452","dept":"토목사업본부"}],"leader3":[{"name":"박종철","rank":"책임매니저","title":"해외현장소장","empNo":"9700496"}]}],"stats":{"total":883,"sites":64,"l2":61,"l3":50,"vacL3":14}},{"bonbu":"건축주택사업본부","leader1":{"name":"이인기","rank":"전무","title":"본부장","empNo":"9300481","dept":"건축주택사업본부"},"subLeaders":[],"sites":[{"site":"가양동 CJ부지 업무복합시설","originalSite":"가양동 CJ부지 업무복합시설","kubun":"국내현장","memberCount":53,"bonbuBreakdown":{"건축주택사업본부":32,"안전품질본부":16,"재경본부":5},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"정희성","rank":"책임매니저","title":"국내현장소장","empNo":"9506681"}]},{"site":"강릉 공군 엄체호 시설공사","originalSite":"강릉 공군 엄체호 시설공사","kubun":"국내현장","memberCount":31,"bonbuBreakdown":{"건축주택사업본부":19,"재경본부":4,"안전품질본부":8},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"허윤준","rank":"책임매니저","title":"국내현장소장","empNo":"9604094"}]},{"site":"고려대 자연계 중앙광장 신축공사","originalSite":"고려대 자연계 중앙광장","kubun":"국내현장","memberCount":17,"bonbuBreakdown":{"건축주택사업본부":12,"재경본부":2,"안전품질본부":3},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"하지훈","rank":"책임매니저","title":"국내현장소장","empNo":"9706823"}]},{"site":"과천 8,9단지 재건축","originalSite":"과천 8,9단지 재건축","kubun":"국내현장","memberCount":10,"bonbuBreakdown":{"안전품질본부":8,"건축주택사업본부":2},"leader2":[],"leader3":[{"name":"강민석","rank":"책임매니저","title":"국내현장소장","empNo":"9506666"}]},{"site":"과천 주암장군마을 재개발","originalSite":"과천 주암장군마을 재개발","kubun":"국내현장","memberCount":28,"bonbuBreakdown":{"건축주택사업본부":19,"안전품질본부":7,"재경본부":2},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"최창혁","rank":"책임매니저","title":"국내현장소장","empNo":"0300646"}]},{"site":"광명11R 재개발","originalSite":"광명11R 재개발","kubun":"국내현장","memberCount":53,"bonbuBreakdown":{"건축주택사업본부":35,"안전품질본부":14,"재경본부":4},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"장계성","rank":"책임매니저","title":"국내현장소장","empNo":"9706856"}]},{"site":"광명5R 재개발","originalSite":"광명5R 재개발","kubun":"국내현장","memberCount":25,"bonbuBreakdown":{"건축주택사업본부":17,"재경본부":3,"안전품질본부":5},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"이진오","rank":"책임매니저","title":"국내현장소장","empNo":"0001385"}]},{"site":"광주 광천동 주택재개발","originalSite":"광주 광천동 주택재개발","kubun":"국내현장","memberCount":11,"bonbuBreakdown":{"건축주택사업본부":2,"안전품질본부":9},"leader2":[],"leader3":[]},{"site":"구로 항동 DC","originalSite":"구로 항동 DC","kubun":"국내현장","memberCount":28,"bonbuBreakdown":{"건축주택사업본부":21,"안전품질본부":4,"재경본부":3},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"김종호","rank":"책임매니저","title":"국내현장소장","empNo":"9600381"}]},{"site":"대구 신천동 주상복합","originalSite":"대구 신천동 주상복합","kubun":"국내현장","memberCount":11,"bonbuBreakdown":{"건축주택사업본부":9,"재경본부":2},"leader2":[],"leader3":[{"name":"오정욱","rank":"책임매니저","title":"국내현장소장","empNo":"0300391"}]},{"site":"대전 도마변동1구역 재개발","originalSite":"대전 도마변동1구역 재개발","kubun":"국내현장","memberCount":26,"bonbuBreakdown":{"재경본부":2,"건축주택사업본부":19,"안전품질본부":5},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"이성준","rank":"책임매니저","title":"국내현장소장","empNo":"9603266"}]},{"site":"대전 선화동 주상복합","originalSite":"대전 선화동 주상복합","kubun":"국내현장","memberCount":29,"bonbuBreakdown":{"안전품질본부":7,"건축주택사업본부":21,"재경본부":1},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"백현호","rank":"책임매니저","title":"국내현장소장","empNo":"9700673"}]},{"site":"대조1구역 주택재개발","originalSite":"대조1구역 주택재개발","kubun":"국내현장","memberCount":51,"bonbuBreakdown":{"건축주택사업본부":37,"재경본부":4,"안전품질본부":10},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"김동각","rank":"책임매니저","title":"국내현장소장","empNo":"9603281"}]},{"site":"더 갤러리 832","originalSite":"더 갤러리 832","kubun":"국내현장","memberCount":8,"bonbuBreakdown":{"건축주택사업본부":7,"재경본부":1},"leader2":[],"leader3":[{"name":"조한철","rank":"책임매니저","title":"국내현장소장","empNo":"9800346"}]},{"site":"더현대 광주","originalSite":"더현대 광주","kubun":"국내현장","memberCount":25,"bonbuBreakdown":{"안전품질본부":6,"건축주택사업본부":17,"재경본부":2},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"김선규","rank":"책임매니저","title":"국내현장소장","empNo":"9703175"}]},{"site":"등촌1구역 재건축","originalSite":"등촌1구역 재건축","kubun":"국내현장","memberCount":27,"bonbuBreakdown":{"건축주택사업본부":19,"재경본부":3,"안전품질본부":5},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"백종성","rank":"책임매니저","title":"국내현장소장","empNo":"9800626"}]},{"site":"디에이치 갤러리","originalSite":"디에이치 갤러리","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":2},"leader2":[],"leader3":[]},{"site":"디에이치 르피크","originalSite":"디에이치 르피크","kubun":"국내현장","memberCount":18,"bonbuBreakdown":{"건축주택사업본부":13,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"이규일","rank":"책임매니저","title":"국내현장소장","empNo":"2104542"}]},{"site":"디에이치 클래스트","originalSite":"디에이치 클래스트","kubun":"국내현장","memberCount":142,"bonbuBreakdown":{"건축주택사업본부":104,"안전품질본부":29,"재경본부":9},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"정연모","rank":"기술위원","title":"총괄실장","empNo":"2400425"},{"name":"김진영","rank":"책임매니저","title":"공구소장","empNo":"9601032"},{"name":"김태희","rank":"책임매니저","title":"단장","empNo":"9702303"},{"name":"이동우","rank":"책임매니저","title":"단장","empNo":"9705811"},{"name":"김세일","rank":"책임매니저","title":"공구소장","empNo":"9800582"},{"name":"김재환","rank":"책임매니저","title":"공구소장","empNo":"0000463"}]},{"site":"라브르 27","originalSite":"라브르 27","kubun":"국내현장","memberCount":19,"bonbuBreakdown":{"건축주택사업본부":12,"재경본부":3,"안전품질본부":4},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"김태형","rank":"책임매니저","title":"국내현장소장","empNo":"0300253"}]},{"site":"마천4구역 주택재개발","originalSite":"마천4구역 주택재개발","kubun":"국내현장","memberCount":6,"bonbuBreakdown":{"건축주택사업본부":2,"안전품질본부":4},"leader2":[],"leader3":[{"name":"이영노","rank":"책임매니저","title":"국내현장소장","empNo":"9700640"}]},{"site":"마포 신수동 지역주택","originalSite":"마포 신수동 지역주택","kubun":"국내현장","memberCount":23,"bonbuBreakdown":{"건축주택사업본부":17,"안전품질본부":4,"재경본부":2},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"노지훈","rank":"책임매니저","title":"국내현장소장","empNo":"9800501"}]},{"site":"밀레니엄 힐튼호텔 부지 개발사업","originalSite":"밀레니엄 힐튼호텔 부지 개발사업","kubun":"국내현장","memberCount":21,"bonbuBreakdown":{"건축주택사업본부":11,"재경본부":3,"안전품질본부":7},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"남기천","rank":"책임매니저","title":"국내현장소장","empNo":"9603141"}]},{"site":"방배5구역 재건축","originalSite":"방배5구역 재건축","kubun":"국내현장","memberCount":58,"bonbuBreakdown":{"건축주택사업본부":44,"안전품질본부":9,"재경본부":5},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"김기만","rank":"책임매니저","title":"국내현장실장","empNo":"9506633"}]},{"site":"배곧서울대학교병원","originalSite":"배곧서울대학교병원","kubun":"국내현장","memberCount":27,"bonbuBreakdown":{"재경본부":3,"건축주택사업본부":17,"안전품질본부":7},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"하태호","rank":"책임매니저","title":"국내현장소장","empNo":"9700964"}]},{"site":"복정역세권 복합2","originalSite":"복정역세권 복합 2BL","kubun":"국내현장","memberCount":24,"bonbuBreakdown":{"건축주택사업본부":11,"안전품질본부":10,"재경본부":3},"leader2":[{"name":"최재원","rank":"상무","title":"담당","empNo":"0500494","dept":"건축사업부"}],"leader3":[]},{"site":"부산 가야동 공동주택 1,2차","originalSite":"부산 가야동 공동주택 1,2차","kubun":"국내현장","memberCount":22,"bonbuBreakdown":{"건축주택사업본부":16,"안전품질본부":5,"재경본부":1},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"사상하","rank":"책임매니저","title":"국내현장소장","empNo":"9100641"}]},{"site":"부산 범천1-1구역 재개발","originalSite":"부산 범천1-1구역 재개발","kubun":"국내현장","memberCount":30,"bonbuBreakdown":{"안전품질본부":9,"건축주택사업본부":18,"재경본부":3},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"최종호","rank":"책임매니저","title":"국내현장소장","empNo":"9405561"}]},{"site":"부산 사직1-6지구 재건축","originalSite":"부산 사직1-6지구 재건축","kubun":"국내현장","memberCount":26,"bonbuBreakdown":{"건축주택사업본부":18,"안전품질본부":6,"재경본부":2},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"계해주","rank":"책임매니저","title":"국내현장소장","empNo":"0000474"}]},{"site":"상도동 지역주택조합","originalSite":"상도동 지역주택조합","kubun":"국내현장","memberCount":25,"bonbuBreakdown":{"건축주택사업본부":18,"재경본부":3,"안전품질본부":4},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"장성문","rank":"책임매니저","title":"국내현장소장","empNo":"9405384"}]},{"site":"성수동 삼표부지 개발사업 PM용역","originalSite":"성수동 삼표부지 개발사업 PM용역","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"성원애드피아 하남 신사옥","originalSite":"성원애드피아 하남 신사옥","kubun":"국내현장","memberCount":22,"bonbuBreakdown":{"건축주택사업본부":17,"재경본부":2,"안전품질본부":3},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"지재욱","rank":"책임매니저","title":"국내현장소장","empNo":"9701044"}]},{"site":"시티오씨엘 6단지","originalSite":"시티오씨엘 6단지","kubun":"국내현장","memberCount":33,"bonbuBreakdown":{"건축주택사업본부":22,"안전품질본부":9,"재경본부":2},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"김규영","rank":"책임매니저","title":"국내현장소장","empNo":"9301272"}]},{"site":"신반포 22차 재건축 PM용역","originalSite":"신반포 22차 재건축 PM용역","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"아산탕정2-A11BL 공동주택","originalSite":"아산탕정2-A11BL 공동주택","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":2},"leader2":[],"leader3":[]},{"site":"아페르 파크","originalSite":"아페르 파크","kubun":"국내현장","memberCount":16,"bonbuBreakdown":{"건축주택사업본부":12,"안전품질본부":3,"재경본부":1},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[]},{"site":"안산 성곡동 DC","originalSite":"안산 성곡동 데이터센터","kubun":"국내현장","memberCount":39,"bonbuBreakdown":{"건축주택사업본부":26,"재경본부":3,"안전품질본부":10},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"김정웅","rank":"책임매니저","title":"국내현장소장","empNo":"0005626"}]},{"site":"안산 시화 데이터센터","originalSite":"안산 시화 데이터센터","kubun":"국내현장","memberCount":9,"bonbuBreakdown":{"안전품질본부":4,"건축주택사업본부":4,"재경본부":1},"leader2":[{"name":"김동원","rank":"상무","title":"실장","empNo":"9501226","dept":"건축사업실"}],"leader3":[{"name":"최민석","rank":"책임매니저","title":"국내현장소장","empNo":"0300624"}]},{"site":"양산 물금 공동주택","originalSite":"양산 물금 공동주택","kubun":"국내현장","memberCount":13,"bonbuBreakdown":{"재경본부":2,"안전품질본부":3,"건축주택사업본부":8},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"도경한","rank":"책임매니저","title":"국내현장소장","empNo":"0807341"}]},{"site":"영동대로 복합개발(2공구)","originalSite":"영동대로 지하공간 복합개발 2공구(건축,시스템)","kubun":"국내현장","memberCount":15,"bonbuBreakdown":{"안전품질본부":3,"건축주택사업본부":11,"재경본부":1},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"김정인","rank":"책임매니저","title":"국내현장소장","empNo":"0005604"}]},{"site":"용인 남사 7BL 공동주택","originalSite":"용인 남사 7BL 공동주택","kubun":"국내현장","memberCount":23,"bonbuBreakdown":{"건축주택사업본부":15,"재경본부":2,"안전품질본부":6},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"이영종","rank":"책임매니저","title":"국내현장소장","empNo":"9600366"}]},{"site":"유엔사부지 복합개발","originalSite":"유엔사부지 복합개발","kubun":"국내현장","memberCount":51,"bonbuBreakdown":{"건축주택사업본부":35,"재경본부":5,"안전품질본부":11},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"임종백","rank":"기술위원","title":"국내현장소장","empNo":"2400414"}]},{"site":"의정부 금오생활권1 재개발","originalSite":"의정부 금오생활권1 재개발","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"이문4구역 주택재개발","originalSite":"이문4구역 주택재개발","kubun":"국내현장","memberCount":6,"bonbuBreakdown":{"건축주택사업본부":2,"안전품질본부":4},"leader2":[],"leader3":[{"name":"김덕현","rank":"책임매니저","title":"국내현장소장","empNo":"0300104"}]},{"site":"이천 중리 역세권 지역주택 1차","originalSite":"이천 중리 역세권 지역주택 1차","kubun":"국내현장","memberCount":16,"bonbuBreakdown":{"건축주택사업본부":11,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[]},{"site":"이천 중리 역세권 지역주택 2차","originalSite":"이천 중리 역세권 지역주택 2차","kubun":"국내현장","memberCount":24,"bonbuBreakdown":{"건축주택사업본부":18,"재경본부":2,"안전품질본부":4},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"백신흠","rank":"책임매니저","title":"국내현장소장","empNo":"9300676"}]},{"site":"인천 동춘 1-9 지역주택","originalSite":"인천 동춘 1-9 지역주택","kubun":"국내현장","memberCount":22,"bonbuBreakdown":{"건축주택사업본부":16,"안전품질본부":4,"재경본부":2},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"김지강","rank":"책임매니저","title":"국내현장소장","empNo":"9601706"}]},{"site":"인천 산곡6구역 재개발","originalSite":"인천 산곡6구역 재개발","kubun":"국내현장","memberCount":10,"bonbuBreakdown":{"건축주택사업본부":5,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"김신호","rank":"책임매니저","title":"국내현장소장","empNo":"9800324"}]},{"site":"인천용현학익 1블록 도시개발사업단","originalSite":"인천용현학익 1블록 도시개발사업단","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"잠실주경기장 리모델링","originalSite":"잠실주경기장 리모델링","kubun":"국내현장","memberCount":41,"bonbuBreakdown":{"건축주택사업본부":30,"재경본부":2,"안전품질본부":9},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"김재환","rank":"전문위원","title":"국내현장소장","empNo":"2506776"}]},{"site":"제기 제4구역 재개발","originalSite":"제기 제4구역 재개발","kubun":"국내현장","memberCount":4,"bonbuBreakdown":{"안전품질본부":3,"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"제주 이도주공 2,3단지 재건축","originalSite":"제주 이도주공 2,3단지 재건축","kubun":"국내현장","memberCount":6,"bonbuBreakdown":{"건축주택사업본부":2,"안전품질본부":4},"leader2":[],"leader3":[{"name":"서경원","rank":"책임매니저","title":"국내현장소장","empNo":"0400445"}]},{"site":"천안 두정동 공동주택","originalSite":"천안 두정동 공동주택","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"청주 사직3구역 재개발","originalSite":"청주 사직3구역 재개발","kubun":"국내현장","memberCount":31,"bonbuBreakdown":{"재경본부":2,"안전품질본부":7,"건축주택사업본부":22},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"강성수","rank":"책임매니저","title":"국내현장소장","empNo":"9700894"}]},{"site":"팀북투 DC","originalSite":"팀북투 데이터센터","kubun":"국내현장","memberCount":40,"bonbuBreakdown":{"건축주택사업본부":26,"안전품질본부":11,"재경본부":3},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"이무희","rank":"책임매니저","title":"국내현장소장","empNo":"9304382"}]},{"site":"평택 고덕 A12BL 공동주택","originalSite":"평택 고덕 A12BL 공동주택","kubun":"국내현장","memberCount":8,"bonbuBreakdown":{"건축주택사업본부":4,"안전품질본부":4},"leader2":[{"name":"김동원","rank":"상무","title":"실장","empNo":"9501226","dept":"건축사업실"}],"leader3":[{"name":"하준원","rank":"책임매니저","title":"국내현장소장","empNo":"0600495"}]},{"site":"평택 고덕 A31BL 공동주택","originalSite":"평택 고덕 A31BL 공동주택","kubun":"국내현장","memberCount":8,"bonbuBreakdown":{"건축주택사업본부":4,"안전품질본부":3,"재경본부":1},"leader2":[{"name":"김동원","rank":"상무","title":"실장","empNo":"9501226","dept":"건축사업실"}],"leader3":[{"name":"임채식","rank":"책임매니저","title":"국내현장소장","empNo":"0001374"}]},{"site":"평택 고덕 A34,35BL 공동주택","originalSite":"평택 고덕 A34,35BL 공동주택","kubun":"국내현장","memberCount":3,"bonbuBreakdown":{"재경본부":3},"leader2":[{"name":"김동원","rank":"상무","title":"실장","empNo":"9501226","dept":"건축사업실"}],"leader3":[]},{"site":"평택 고덕 A65BL 공동주택","originalSite":"평택 고덕 A65BL 공동주택","kubun":"국내현장","memberCount":4,"bonbuBreakdown":{"건축주택사업본부":4},"leader2":[{"name":"김동원","rank":"상무","title":"실장","empNo":"9501226","dept":"건축사업실"}],"leader3":[{"name":"김재호","rank":"책임매니저","title":"국내현장소장","empNo":"0300196"}]},{"site":"평택 합정주공 재건축","originalSite":"평택 합정주공 재건축","kubun":"국내현장","memberCount":35,"bonbuBreakdown":{"건축주택사업본부":23,"재경본부":3,"안전품질본부":9},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"권기환","rank":"전문위원","title":"국내현장소장","empNo":"2506780"}]},{"site":"하나드림타운 그룹헤드쿼터","originalSite":"하나드림타운 그룹헤드쿼터","kubun":"국내현장","memberCount":51,"bonbuBreakdown":{"건축주택사업본부":39,"재경본부":3,"안전품질본부":9},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"고창희","rank":"책임매니저","title":"국내현장소장","empNo":"9401940"}]},{"site":"한남3구역 주택재개발","originalSite":"한남3구역 주택재개발","kubun":"국내현장","memberCount":14,"bonbuBreakdown":{"건축주택사업본부":5,"재경본부":1,"안전품질본부":8},"leader2":[],"leader3":[{"name":"박세진","rank":"상무","title":"국내현장실장","empNo":"0005652"}]},{"site":"현대자동차 수원 하이테크센터","originalSite":"현대자동차 수원 하이테크센터","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":1,"재경본부":1},"leader2":[],"leader3":[{"name":"강범","rank":"책임매니저","title":"국내현장소장","empNo":"1307370"}]},{"site":"현대지식산업센터 가산 퍼블릭","originalSite":"현대지식산업센터 가산 퍼블릭","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"현대프리미어캠퍼스 세마역","originalSite":"현대프리미어캠퍼스 세마역","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"홍제3구역 주택재건축","originalSite":"홍제3구역 주택재건축","kubun":"국내현장","memberCount":5,"bonbuBreakdown":{"건축주택사업본부":2,"안전품질본부":3},"leader2":[],"leader3":[{"name":"심재홍","rank":"책임매니저","title":"국내현장소장","empNo":"0200656"}]},{"site":"흑석9구역 재개발","originalSite":"흑석9구역 재개발","kubun":"국내현장","memberCount":37,"bonbuBreakdown":{"건축주택사업본부":23,"안전품질본부":10,"재경본부":4},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"이문희","rank":"책임매니저","title":"국내현장소장","empNo":"9405620"}]},{"site":"힐스테이트 과천청사역","originalSite":"힐스테이트 과천청사역","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 구미더퍼스트","originalSite":"힐스테이트 구미더퍼스트","kubun":"국내현장","memberCount":21,"bonbuBreakdown":{"재경본부":2,"건축주택사업본부":15,"안전품질본부":4},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"맹주은","rank":"책임매니저","title":"국내현장소장","empNo":"9405550"}]},{"site":"힐스테이트 대구역 퍼스트 1,2차","originalSite":"힐스테이트 대구역 퍼스트 1,2차","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":2},"leader2":[],"leader3":[]},{"site":"힐스테이트 대명 센트럴 2차","originalSite":"힐스테이트 대명 센트럴 2차","kubun":"국내현장","memberCount":7,"bonbuBreakdown":{"건축주택사업본부":7},"leader2":[],"leader3":[]},{"site":"힐스테이트 더 운정","originalSite":"힐스테이트 더 운정","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":2},"leader2":[],"leader3":[]},{"site":"힐스테이트 더웨이브시티","originalSite":"힐스테이트 더웨이브시티","kubun":"국내현장","memberCount":42,"bonbuBreakdown":{"재경본부":4,"건축주택사업본부":28,"안전품질본부":10},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"신현식","rank":"책임매니저","title":"국내현장소장","empNo":"9300982"}]},{"site":"힐스테이트 도안리버파크 1단지(5BL)","originalSite":"힐스테이트 도안리버파크 1단지(5BL)","kubun":"국내현장","memberCount":29,"bonbuBreakdown":{"건축주택사업본부":21,"안전품질본부":6,"재경본부":2},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"신성훈","rank":"책임매니저","title":"국내현장소장","empNo":"0400456"}]},{"site":"힐스테이트 도안리버파크 2단지(4BL)","originalSite":"힐스테이트 도안리버파크 2단지(4BL)","kubun":"국내현장","memberCount":31,"bonbuBreakdown":{"건축주택사업본부":23,"안전품질본부":7,"재경본부":1},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"김용주","rank":"책임매니저","title":"국내현장소장","empNo":"9202423"}]},{"site":"힐스테이트 도안리버파크 3단지(2BL)","originalSite":"힐스테이트 도안리버파크 3단지(2BL)","kubun":"국내현장","memberCount":36,"bonbuBreakdown":{"건축주택사업본부":23,"재경본부":4,"안전품질본부":9},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"이성진","rank":"책임매니저","title":"국내현장소장","empNo":"9706462"}]},{"site":"힐스테이트 도안리버파크 5단지(1BL)","originalSite":"힐스테이트 도안리버파크 5단지(1BL)","kubun":"국내현장","memberCount":18,"bonbuBreakdown":{"건축주택사업본부":13,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"이수복","rank":"책임매니저","title":"국내현장소장","empNo":"9703374"}]},{"site":"힐스테이트 도화 더테라스","originalSite":"힐스테이트 도화 더테라스","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 동탄역 센트릭","originalSite":"힐스테이트 동탄역 센트릭","kubun":"국내현장","memberCount":3,"bonbuBreakdown":{"건축주택사업본부":2,"재경본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 둔산","originalSite":"힐스테이트 둔산","kubun":"국내현장","memberCount":17,"bonbuBreakdown":{"재경본부":2,"건축주택사업본부":12,"안전품질본부":3},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"안재석","rank":"책임매니저","title":"국내현장소장","empNo":"9706775"}]},{"site":"힐스테이트 라군 인테라스 2차","originalSite":"힐스테이트 라군 인테라스 2차","kubun":"국내현장","memberCount":38,"bonbuBreakdown":{"안전품질본부":4,"건축주택사업본부":30,"재경본부":4},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"민재홍","rank":"책임매니저","title":"국내현장소장","empNo":"9503991"}]},{"site":"힐스테이트 레이크 송도 5차","originalSite":"힐스테이트 레이크 송도 5차","kubun":"국내현장","memberCount":27,"bonbuBreakdown":{"재경본부":2,"건축주택사업본부":18,"안전품질본부":7},"leader2":[{"name":"백운호","rank":"상무","title":"PD","empNo":"9107501","dept":"주택사업부"}],"leader3":[{"name":"한석희","rank":"책임매니저","title":"국내현장소장","empNo":"9603185"}]},{"site":"힐스테이트 불당 더원","originalSite":"힐스테이트 불당 더원","kubun":"국내현장","memberCount":24,"bonbuBreakdown":{"건축주택사업본부":16,"안전품질본부":7,"재경본부":1},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"양인원","rank":"책임매니저","title":"국내현장소장","empNo":"9603174"}]},{"site":"힐스테이트 삼성","originalSite":"힐스테이트 삼성","kubun":"국내현장","memberCount":10,"bonbuBreakdown":{"건축주택사업본부":9,"재경본부":1},"leader2":[],"leader3":[{"name":"류성도","rank":"책임매니저","title":"국내현장소장","empNo":"9405631"}]},{"site":"힐스테이트 선암공원","originalSite":"힐스테이트 선암공원","kubun":"국내현장","memberCount":28,"bonbuBreakdown":{"건축주택사업본부":20,"재경본부":2,"안전품질본부":6},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"박정호","rank":"책임매니저","title":"국내현장소장","empNo":"9300175"}]},{"site":"힐스테이트 숭의역","originalSite":"힐스테이트 숭의역","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 양주옥정 파티오포레","originalSite":"힐스테이트 양주옥정 파티오포레","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 유천 더와이즈","originalSite":"힐스테이트 유천 더와이즈","kubun":"국내현장","memberCount":18,"bonbuBreakdown":{"건축주택사업본부":13,"안전품질본부":4,"재경본부":1},"leader2":[{"name":"박호준","rank":"상무","title":"PD","empNo":"9901483","dept":"주택사업부"}],"leader3":[{"name":"최상원","rank":"책임매니저","title":"국내현장소장","empNo":"0300635"}]},{"site":"힐스테이트 이수역센트럴","originalSite":"힐스테이트 이수역센트럴","kubun":"국내현장","memberCount":25,"bonbuBreakdown":{"건축주택사업본부":18,"재경본부":2,"안전품질본부":5},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"이석우","rank":"책임매니저","title":"국내현장소장","empNo":"9600322"}]},{"site":"힐스테이트 죽림더프라우드","originalSite":"힐스테이트 죽림더프라우드","kubun":"국내현장","memberCount":35,"bonbuBreakdown":{"재경본부":3,"건축주택사업본부":25,"안전품질본부":7},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"서정석","rank":"책임매니저","title":"국내현장소장","empNo":"9203973"}]},{"site":"힐스테이트 천안역 스카이움","originalSite":"힐스테이트 천안역 스카이움","kubun":"국내현장","memberCount":31,"bonbuBreakdown":{"건축주택사업본부":22,"재경본부":2,"안전품질본부":7},"leader2":[{"name":"송종관","rank":"상무","title":"PD","empNo":"9707032","dept":"주택사업부"}],"leader3":[{"name":"김상수","rank":"책임매니저","title":"국내현장소장","empNo":"9706860"}]},{"site":"힐스테이트 하버하우스 스테이","originalSite":"힐스테이트 하버하우스 스테이","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"건축주택사업본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 환호공원 1차","originalSite":"힐스테이트 환호공원 1차","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"재경본부":1},"leader2":[],"leader3":[]},{"site":"힐스테이트 회룡역파크뷰","originalSite":"힐스테이트 회룡역파크뷰","kubun":"국내현장","memberCount":14,"bonbuBreakdown":{"건축주택사업본부":12,"재경본부":2},"leader2":[],"leader3":[{"name":"최진원","rank":"책임매니저","title":"국내현장소장","empNo":"9600683"}]},{"site":"힐스테이트 DMC역","originalSite":"힐스테이트 DMC역","kubun":"국내현장","memberCount":27,"bonbuBreakdown":{"건축주택사업본부":19,"재경본부":3,"안전품질본부":5},"leader2":[{"name":"김범석","rank":"상무","title":"PD","empNo":"9706403","dept":"건축사업부"}],"leader3":[{"name":"손원재","rank":"책임매니저","title":"국내현장소장","empNo":"9400515"}]},{"site":"GBC본공사","originalSite":"GBC시공단","kubun":"국내현장","memberCount":49,"bonbuBreakdown":{"건축주택사업본부":16,"안전품질본부":30,"재경본부":3},"leader2":[{"name":"김지훈","rank":"상무","title":"단장","empNo":"9405351","dept":"GBC시공단"}],"leader3":[{"name":"김지훈","rank":"상무","title":"단장","empNo":"9405351"}]},{"site":"ICN062 DC","originalSite":"ICN062","kubun":"국내현장","memberCount":36,"bonbuBreakdown":{"건축주택사업본부":29,"재경본부":2,"안전품질본부":5},"leader2":[{"name":"박상준","rank":"상무","title":"실장","empNo":"9700986","dept":"건축주택기술실"}],"leader3":[{"name":"이호준","rank":"책임매니저","title":"국내현장소장","empNo":"9501241"}]},{"site":"PUS05 DC","originalSite":"PUS05","kubun":"국내현장","memberCount":26,"bonbuBreakdown":{"건축주택사업본부":20,"안전품질본부":4,"재경본부":2},"leader2":[{"name":"박상준","rank":"상무","title":"실장","empNo":"9700986","dept":"건축주택기술실"}],"leader3":[{"name":"이석중","rank":"책임매니저","title":"국내현장소장","empNo":"9701825"}]},{"site":"S프로젝트(성북동 영빈관)","originalSite":"성북동 영빈관","kubun":"국내현장","memberCount":14,"bonbuBreakdown":{"건축주택사업본부":11,"안전품질본부":2,"재경본부":1},"leader2":[{"name":"김우진","rank":"상무","title":"PD","empNo":"0000485","dept":"건축사업부"}],"leader3":[{"name":"오정현","rank":"책임매니저","title":"국내현장소장","empNo":"0001315"}]},{"site":"미국 전기로 제철소","originalSite":"미국 전기로 제철소 건설공사(건축)","kubun":"해외현장","memberCount":10,"bonbuBreakdown":{"건축주택사업본부":10},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[]},{"site":"미국 조지아 전기차 배터리공장","originalSite":"미국 조지아 전기차 배터리공장","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":2},"leader2":[],"leader3":[]},{"site":"사우디 현대차 CKD 공장","originalSite":"사우디 CKD 공장","kubun":"해외현장","memberCount":17,"bonbuBreakdown":{"건축주택사업본부":15,"안전품질본부":1,"재경본부":1},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[{"name":"이승한","rank":"책임매니저","title":"해외현장소장","empNo":"0600425"}]},{"site":"스리랑카 콜롬보 킬스시티 프로젝트","originalSite":"스리랑카 콜롬보 킬스시티 프로젝트","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"재경본부":2},"leader2":[],"leader3":[]},{"site":"싱가포르 풍골 스포츠센터","originalSite":"싱가포르 풍골 스포츠센터","kubun":"해외현장","memberCount":6,"bonbuBreakdown":{"건축주택사업본부":6},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[{"name":"추현식","rank":"책임매니저","title":"해외현장소장","empNo":"0500503"}]},{"site":"싱가포르 Shaw Tower","originalSite":"싱가포르 쇼타워","kubun":"해외현장","memberCount":19,"bonbuBreakdown":{"건축주택사업본부":17,"재경본부":2},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[{"name":"이우진","rank":"책임매니저","title":"해외현장소장","empNo":"0400482"}]},{"site":"카타르 루사일 타워","originalSite":"카타르 루사일 타워","kubun":"해외현장","memberCount":31,"bonbuBreakdown":{"건축주택사업본부":28,"재경본부":3},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[{"name":"김용성","rank":"책임매니저","title":"해외현장소장","empNo":"9604153"}]},{"site":"페루 친체로공항 PKG #2","originalSite":"페루 친체로 신공항 PKG&#35;2(본공사)","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":1,"재경본부":1},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[]},{"site":"홍콩 유나이티드 크리스천 병원","originalSite":"홍콩 유나이티드 크리스천 병원","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"건축주택사업본부":1,"재경본부":1},"leader2":[{"name":"고현봉","rank":"상무","title":"PD","empNo":"9800335","dept":"건축사업부"}],"leader3":[]}],"stats":{"total":2180,"sites":108,"l2":74,"l3":83,"vacL3":30}},{"bonbu":"플랜트사업본부","leader1":{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},"subLeaders":[],"sites":[{"site":"샤힌사업단","originalSite":"샤힌사업단","kubun":"국내현장","memberCount":24,"bonbuBreakdown":{"플랜트사업본부":24},"leader2":[],"leader3":[]},{"site":"울산 에스오일 샤힌 에틸렌 생산시설 건설 공사 (PKG 1)","originalSite":"샤힌 에틸렌시설 건설공사 PKG1","kubun":"국내현장","memberCount":234,"bonbuBreakdown":{"플랜트사업본부":190,"재경본부":14,"안전품질본부":30},"leader2":[{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[{"name":"오정철","rank":"책임매니저","title":"담당","empNo":"9400563"},{"name":"이현영","rank":"책임매니저","title":"국내현장실장","empNo":"9401321"}]},{"site":"리비아 트리폴리 웨스트 화력발전소 공사","originalSite":"리비아 트리폴리 웨스트 화력발전소 공사","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"플랜트사업본부":2},"leader2":[{"name":"정무식","rank":null,"title":null,"empNo":null,"dept":null,"unresolved":true},{"name":"고승희","rank":"책임매니저","title":"PD","empNo":"9802046","dept":"플랜트사업본부"}],"leader3":[]},{"site":"미국 전기로 제철소 공사","originalSite":"미국 전기로 제철소 건설공사","kubun":"해외현장","memberCount":124,"bonbuBreakdown":{"플랜트사업본부":115,"재경본부":8,"안전품질본부":1},"leader2":[{"name":"백철욱","rank":"상무","title":"해외현장실장","empNo":"9701593","dept":"미국 전기로 제철소 건설공사"}],"leader3":[{"name":"백철욱","rank":"상무","title":"해외현장실장","empNo":"9701593"}]},{"site":"베트남 꽝짝1 1,400MW 화력발전소 공사","originalSite":"베트남 꽝짝1 1,400MW 화력발전소 공사","kubun":"해외현장","memberCount":35,"bonbuBreakdown":{"플랜트사업본부":31,"재경본부":4},"leader2":[{"name":"정무식","rank":null,"title":null,"empNo":null,"dept":null,"unresolved":true},{"name":"고승희","rank":"책임매니저","title":"PD","empNo":"9802046","dept":"플랜트사업본부"}],"leader3":[{"name":"이윤석","rank":"기술위원","title":"해외현장소장","empNo":"2414603"}]},{"site":"사우디 마잔 가스처리 공장 부대시설공사","originalSite":"사우디 마잔 가스처리 공장 부대시설공사","kubun":"해외현장","memberCount":51,"bonbuBreakdown":{"플랜트사업본부":42,"안전품질본부":3,"재경본부":6},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[{"name":"정준택","rank":"상무","title":"해외현장실장","empNo":"9301095"}]},{"site":"사우디 마잔 오일처리 시설 신설 및 확장공사","originalSite":"사우디 마잔 오일처리 시설 신설 및 확장공사","kubun":"해외현장","memberCount":6,"bonbuBreakdown":{"플랜트사업본부":5,"재경본부":1},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[]},{"site":"사우디 아미랄 유틸리티 및 부대시설 공사 (PKG4)","originalSite":"사우디 아미랄 유틸리티 및 부대시설 공사 (PKG4)","kubun":"해외현장","memberCount":164,"bonbuBreakdown":{"플랜트사업본부":151,"재경본부":10,"안전품질본부":3},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[{"name":"임영빈","rank":"상무","title":"해외현장실장","empNo":"9802105"}]},{"site":"사우디 자푸라 유틸리티 및 부대시설 공사","originalSite":"사우디 자푸라 유틸리티 및 부대시설 공사","kubun":"해외현장","memberCount":35,"bonbuBreakdown":{"플랜트사업본부":31,"안전품질본부":1,"재경본부":3},"leader2":[{"name":"정무식","rank":null,"title":null,"empNo":null,"dept":null,"unresolved":true},{"name":"고승희","rank":"책임매니저","title":"PD","empNo":"9802046","dept":"플랜트사업본부"}],"leader3":[{"name":"이성혁","rank":"책임매니저","title":"해외현장소장","empNo":"9600510"}]},{"site":"사우디 자푸라II 유틸리티 및 부대시설 공사 (PKG 2)","originalSite":"사우디 자푸라 II 유틸리티 및 부대공사 (PKG2)","kubun":"해외현장","memberCount":84,"bonbuBreakdown":{"플랜트사업본부":74,"재경본부":7,"안전품질본부":3},"leader2":[{"name":"정무식","rank":null,"title":null,"empNo":null,"dept":null,"unresolved":true},{"name":"고승희","rank":"책임매니저","title":"PD","empNo":"9802046","dept":"플랜트사업본부"}],"leader3":[{"name":"김형철","rank":"책임매니저","title":"해외현장실장","empNo":"9707043"}]},{"site":"알제리 오마세3 1,300MW 복합화력발전소 공사","originalSite":"알제리 우마쉐3 1,300MW 복합화력발전소","kubun":"해외현장","memberCount":34,"bonbuBreakdown":{"플랜트사업본부":26,"재경본부":7,"안전품질본부":1},"leader2":[{"name":"정무식","rank":null,"title":null,"empNo":null,"dept":null,"unresolved":true},{"name":"고승희","rank":"책임매니저","title":"PD","empNo":"9802046","dept":"플랜트사업본부"}],"leader3":[{"name":"정민권","rank":"책임매니저","title":"해외현장소장","empNo":"9304426"}]},{"site":"이라크 바스라 정유공장 고도화설비 공사","originalSite":"이라크 바스라 정유공장 고도화설비 공사","kubun":"해외현장","memberCount":32,"bonbuBreakdown":{"플랜트사업본부":23,"재경본부":9},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[{"name":"정태수","rank":"책임매니저","title":"해외현장소장","empNo":"9403754"}]},{"site":"이라크 카르발라 정유공장 공사","originalSite":"이라크 카르발라 정유공장","kubun":"해외현장","memberCount":2,"bonbuBreakdown":{"플랜트사업본부":2},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[{"name":"김창남","rank":"책임매니저","title":"해외현장소장","empNo":"9300562"}]},{"site":"이라크 해수처리시설 공사 (CSSP)","originalSite":"이라크 해수처리시설 공사","kubun":"해외현장","memberCount":158,"bonbuBreakdown":{"플랜트사업본부":145,"재경본부":12,"안전품질본부":1},"leader2":[{"name":"한재형","rank":"상무","title":"실장","empNo":"9705995","dept":"플랜트수행실"}],"leader3":[{"name":"박수철","rank":"상무","title":"해외현장실장","empNo":"0804301"}]},{"site":"파푸아 LNG 기본설계","originalSite":"파푸아 LNG 기본설계 공사","kubun":"해외현장","memberCount":28,"bonbuBreakdown":{"플랜트사업본부":28},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"심보현","rank":"상무","title":"실장","empNo":"9933349","dept":"플랜트수주영업실"}],"leader3":[]},{"site":"파푸아 LNG 기본설계 공사 요코하마 오피스","originalSite":"파푸아 LNG 기본설계 공사 요코하마 오피스","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"플랜트사업본부":1},"leader2":[{"name":"이상배","rank":"전무","title":"본부장","empNo":"9300304","dept":"플랜트사업본부"},{"name":"심보현","rank":"상무","title":"실장","empNo":"9933349","dept":"플랜트수주영업실"}],"leader3":[]}],"stats":{"total":1014,"sites":16,"l2":27,"l3":12,"vacL3":5}},{"bonbu":"NewEnergy사업부","leader1":{"name":"최영","rank":"전무","title":"사업부장","empNo":"9200266","dept":"NewEnergy사업부"},"subLeaders":[],"sites":[{"site":"동해안-신가평 HVDC 송전선공사","originalSite":"동해안-신가평 HVDC 송전선공사","kubun":"국내현장","memberCount":15,"bonbuBreakdown":{"NewEnergy사업부":9,"재경본부":2,"안전품질본부":4},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[{"name":"김기연","rank":"책임매니저","title":"국내현장소장","empNo":"0801634"}]},{"site":"서산태양광발전소 관리운영 사업소","originalSite":"서산태양광발전소 관리운영 사업소","kubun":"국내현장","memberCount":6,"bonbuBreakdown":{"NewEnergy사업부":6},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[]},{"site":"수출용신형연구로 건설공사","originalSite":"수출용신형연구로 건설공사","kubun":"국내현장","memberCount":21,"bonbuBreakdown":{"NewEnergy사업부":19,"안전품질본부":1,"재경본부":1},"leader2":[{"name":"안찬호","rank":"상무","title":"실장","empNo":"0700801","dept":"NewEnergy사업기획실"}],"leader3":[]},{"site":"신한울원자력 3_4호기","originalSite":"신한울원자력 3_4호기","kubun":"국내현장","memberCount":184,"bonbuBreakdown":{"NewEnergy사업부":147,"재경본부":22,"안전품질본부":15},"leader2":[{"name":"신달원","rank":"상무","title":"실장","empNo":"9505411","dept":"NuclearSolution실"}],"leader3":[{"name":"채진석","rank":"상무","title":"국내현장소장","empNo":"9403776"}]},{"site":"울주 원전연계 청정수소 실증","originalSite":"울주 원전연계 청정수소 실증","kubun":"국내현장","memberCount":2,"bonbuBreakdown":{"NewEnergy사업부":1,"안전품질본부":1},"leader2":[],"leader3":[]},{"site":"혁신원자력연구단지 구축공사","originalSite":"혁신원자력연구단지 구축공사","kubun":"국내현장","memberCount":1,"bonbuBreakdown":{"재경본부":1},"leader2":[{"name":"안찬호","rank":"상무","title":"실장","empNo":"0700801","dept":"NewEnergy사업기획실"}],"leader3":[]},{"site":"루마니아 체르나보다 설비개선공사","originalSite":"루마니아 체르나보다 설비개선공사","kubun":"해외현장","memberCount":12,"bonbuBreakdown":{"NewEnergy사업부":10,"안전품질본부":1,"재경본부":1},"leader2":[{"name":"신달원","rank":"상무","title":"실장","empNo":"9505411","dept":"NuclearSolution실"}],"leader3":[{"name":"이상준","rank":"전문위원","title":"해외현장소장","empNo":"2508723"}]},{"site":"루마니아 CTRF 신축공사","originalSite":"루마니아 CTRF 신축공사","kubun":"해외현장","memberCount":10,"bonbuBreakdown":{"NewEnergy사업부":7,"안전품질본부":1,"재경본부":2},"leader2":[{"name":"신달원","rank":"상무","title":"실장","empNo":"9505411","dept":"NuclearSolution실"}],"leader3":[{"name":"임현준","rank":"책임매니저","title":"해외현장소장","empNo":"0005020"}]},{"site":"미국 텍사스 LUCY 태양광 발전사업","originalSite":"미국 텍사스 LUCY 태양광 발전사업","kubun":"해외현장","memberCount":1,"bonbuBreakdown":{"재경본부":1},"leader2":[],"leader3":[]},{"site":"미얀마 500kV 변전소 Ph.1 공사","originalSite":"미얀마 500kV 변전소 Ph.1 공사","kubun":"해외현장","memberCount":3,"bonbuBreakdown":{"NewEnergy사업부":2,"재경본부":1},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[{"name":"이충헌","rank":"책임매니저","title":"해외현장소장","empNo":"9401155"}]},{"site":"불가리아 코즐로두이 원전 7,8호기 설계공사","originalSite":"불가리아 코즐로두이 원전 7,8호기 설계공사","kubun":"해외현장","memberCount":124,"bonbuBreakdown":{"플랜트사업본부":39,"NewEnergy사업부":78,"재경본부":7},"leader2":[{"name":"신달원","rank":"상무","title":"실장","empNo":"9505411","dept":"NuclearSolution실"}],"leader3":[]},{"site":"사우디 리야드-쿠드미 500kV HVDC 송전선로 공사(1공구)","originalSite":"사우디 리야드-쿠드미 500kV HVDC 송전선로 공사(1공구)","kubun":"해외현장","memberCount":15,"bonbuBreakdown":{"NewEnergy사업부":12,"재경본부":2,"안전품질본부":1},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[{"name":"최동호","rank":"책임매니저","title":"해외현장실장","empNo":"9405944"}]},{"site":"사우디 쿨리스 380kV 송전공사","originalSite":"사우디 쿨리스 380kV 송전공사","kubun":"해외현장","memberCount":6,"bonbuBreakdown":{"재경본부":1,"NewEnergy사업부":5},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[{"name":"한준희","rank":"책임매니저","title":"해외현장소장","empNo":"0701113"}]},{"site":"사우디 하일4 - 카심2 380kV 송전선 공사","originalSite":"사우디 하일4 - 카심2 380kV 송전선 공사","kubun":"해외현장","memberCount":1,"bonbuBreakdown":{"NewEnergy사업부":1},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[]},{"site":"사우디 후마지 380kV 송전공사","originalSite":"사우디 후마지 380kV 송전공사","kubun":"해외현장","memberCount":8,"bonbuBreakdown":{"NewEnergy사업부":7,"재경본부":1},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[{"name":"전신용","rank":"책임매니저","title":"해외현장소장","empNo":"9704843"}]},{"site":"사우디 NIC South - YCNT HVDC 송전(P1)","originalSite":"사우디 NIC South - YCNT HVDC 송전(P1)","kubun":"해외현장","memberCount":6,"bonbuBreakdown":{"NewEnergy사업부":5,"재경본부":1},"leader2":[{"name":"최용석","rank":"책임매니저","title":"실장","empNo":"0500764","dept":"ECO-One사업실"}],"leader3":[{"name":"김윤식","rank":"책임매니저","title":"해외현장소장","empNo":"1901820"}]},{"site":"UAE 원전 건설공사","originalSite":"UAE 원전 건설공사","kubun":"해외현장","memberCount":10,"bonbuBreakdown":{"NewEnergy사업부":7,"재경본부":2,"안전품질본부":1},"leader2":[{"name":"안찬호","rank":"상무","title":"실장","empNo":"0700801","dept":"NewEnergy사업기획실"}],"leader3":[{"name":"박상현","rank":"전문위원","title":"해외현장실장","empNo":"2600936"}]},{"site":"미국 Indian Point Energy Center(IPEC)","originalSite":"미국 Indian Point Energy Center(IPEC)","kubun":"해외법인","memberCount":7,"bonbuBreakdown":{"재경본부":1,"NewEnergy사업부":5,"글로벌사업부":1},"leader2":[{"name":"안찬호","rank":"상무","title":"실장","empNo":"0700801","dept":"NewEnergy사업기획실"}],"leader3":[{"name":"정구혁","rank":"책임매니저","title":"법인장","empNo":"1302414"}]}],"stats":{"total":432,"sites":18,"l2":16,"l3":11,"vacL3":7}},{"bonbu":"글로벌사업부","leader1":{"name":"김경수","rank":"전무","title":"사업부장","empNo":"9504152","dept":"글로벌사업부"},"subLeaders":[],"sites":[{"site":"영남지사","originalSite":"영남지사","kubun":"국내지사","memberCount":3,"bonbuBreakdown":{"글로벌사업부":3},"leader2":[],"leader3":[{"name":"한정훈","rank":"책임매니저","title":"국내지사장","empNo":"0201220"}]},{"site":"중부지사","originalSite":"중부지사","kubun":"국내지사","memberCount":7,"bonbuBreakdown":{"글로벌사업부":7},"leader2":[],"leader3":[{"name":"오범균","rank":"책임매니저","title":"국내지사장","empNo":"9901944"}]},{"site":"도하 지사","originalSite":"도하 지사","kubun":"해외지사","memberCount":2,"bonbuBreakdown":{"글로벌사업부":1,"재경본부":1},"leader2":[],"leader3":[{"name":"김홍수","rank":"책임매니저","title":"해외지사장","empNo":"1112031"}]},{"site":"두바이 사무소","originalSite":"두바이 사무소","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"PI본부":1},"leader2":[],"leader3":[]},{"site":"루이지애나 지사","originalSite":"루이지애나 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"허두환","rank":"책임매니저","title":"해외지사장","empNo":"0602262"}]},{"site":"리마 지사","originalSite":"리마 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"엄태성","rank":"책임매니저","title":"해외지사장","empNo":"0401536"}]},{"site":"마닐라 지사","originalSite":"마닐라 지사","kubun":"해외지사","memberCount":4,"bonbuBreakdown":{"글로벌사업부":2,"PI본부":1,"재경본부":1},"leader2":[],"leader3":[{"name":"최진우","rank":"책임매니저","title":"해외지사장","empNo":"1900411"}]},{"site":"바르샤바 지사","originalSite":"바르샤바 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"박형환","rank":"책임매니저","title":"해외지사장","empNo":"2212860"}]},{"site":"소피아 지사","originalSite":"소피아 지사","kubun":"해외지사","memberCount":3,"bonbuBreakdown":{"경영지원본부":1,"글로벌사업부":1,"재경본부":1},"leader2":[],"leader3":[]},{"site":"시드니 지사","originalSite":"시드니 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"심기윤","rank":"책임매니저","title":"해외지사장","empNo":"1307493"}]},{"site":"싱가포르 지사","originalSite":"싱가포르 지사","kubun":"해외지사","memberCount":4,"bonbuBreakdown":{"글로벌사업부":1,"PI본부":1,"안전품질본부":1,"재경본부":1},"leader2":[],"leader3":[{"name":"안학균","rank":"책임매니저","title":"해외지사장","empNo":"0701315"}]},{"site":"아부다비 지사","originalSite":"아부다비 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"홍정배","rank":"책임매니저","title":"해외지사장","empNo":"0802306"}]},{"site":"알제리 지사","originalSite":"알제리 지사","kubun":"해외지사","memberCount":2,"bonbuBreakdown":{"글로벌사업부":1,"재경본부":1},"leader2":[],"leader3":[]},{"site":"알코바 지사","originalSite":"알코바 지사","kubun":"해외지사","memberCount":8,"bonbuBreakdown":{"글로벌사업부":3,"재경본부":3,"경영지원본부":1,"PI본부":1},"leader2":[],"leader3":[{"name":"김이철","rank":"책임매니저","title":"해외지사장","empNo":"9703422"}]},{"site":"오클랜드 지사","originalSite":"오클랜드 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"이원재","rank":"책임매니저","title":"해외지사장","empNo":"0802196"}]},{"site":"자카르타 지사","originalSite":"자카르타 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"재경본부":1},"leader2":[],"leader3":[]},{"site":"파나마시티 지사","originalSite":"파나마시티 지사","kubun":"해외지사","memberCount":1,"bonbuBreakdown":{"글로벌사업부":1},"leader2":[],"leader3":[{"name":"김지영","rank":"책임매니저","title":"해외지사장","empNo":"1107884"}]},{"site":"하노이 지사","originalSite":"하노이 지사","kubun":"해외지사","memberCount":2,"bonbuBreakdown":{"재경본부":1,"글로벌사업부":1},"leader2":[],"leader3":[{"name":"배준호","rank":"책임매니저","title":"해외지사장","empNo":"0805414"}]},{"site":"Hyundai E&amp;C Japan","originalSite":"Hyundai E&amp;C Japan","kubun":"해외법인","memberCount":2,"bonbuBreakdown":{"글로벌사업부":2},"leader2":[],"leader3":[{"name":"민순기","rank":"책임매니저","title":"법인장","empNo":"0100416"}]}],"stats":{"total":46,"sites":19,"l2":0,"l3":15,"vacL3":4}},{"bonbu":"개발사업부","leader1":{"name":"이동훈","rank":"상무","title":"사업부장","empNo":"0003275","dept":"개발사업부"},"subLeaders":[],"sites":[{"site":"서산B지구 기반시설이관사업소","originalSite":"서산B지구 기반시설이관사업소","kubun":"국내현장","memberCount":7,"bonbuBreakdown":{"개발사업부":6,"안전품질본부":1},"leader2":[],"leader3":[{"name":"진규현","rank":"책임매니저","title":"사업소장","empNo":"0602576"}]}],"stats":{"total":7,"sites":1,"l2":0,"l3":1,"vacL3":0}}];
+window.FIELD_EXCLUSION_DATA = {"고문역":[{"name":"류성안","rank":"고문역","grade":"고문역","title":"단장","dept":"플랜트사업본부 > 샤힌사업단","location":"국내현장","empNo":"2601072"}],"자문역":[],"사외이사":[],"비상근":[]};
+window.FIELD_EXCLUSION_META = {"고문역":{"group":"직급","criteria":"직급 = 고문역"},"자문역":{"group":"직급","criteria":"직급 = 자문역"},"사외이사":{"group":"직급","criteria":"직급 = 사외이사"},"비상근":{"group":"근무지","criteria":"근무지 = 비상근 (직급=고문역/자문역/사외이사 제외)"}};
+window.FIELD_EXCLUSION_KEYS = ["고문역","자문역","사외이사","비상근"];
+</script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useMemo, useEffect, useRef, useCallback } = React;
+
+const ORG_INITIAL = window.FIELD_ORG_DATA;
+const EXCLUSION_DATA = window.FIELD_EXCLUSION_DATA || {};
+const EXCLUSION_META = window.FIELD_EXCLUSION_META || {};
+const EXCLUSION_KEYS = window.FIELD_EXCLUSION_KEYS || [];
+const STORAGE_KEY = 'field-org-v7';
+const KUBUN_LIST = ['전체', '국내현장', '국내지사', '해외현장', '해외지사', '해외법인'];
+
+// ---------- Persistence ----------
+function loadOrg() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(ORG_INITIAL));
+}
+function saveOrg(org) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(org)); } catch (e) {}
+}
+
+// ---------- Helpers ----------
+function countSites(b) { return b.sites.length; }
+function countMembers(b) { return b.stats?.total ?? b.sites.reduce((a,s)=>a+(s.memberCount||0),0); }
+function countLeaders(org) {
+  let l1=0, l2=0, l3=0;
+  const seen2 = new Set(), seen3 = new Set();
+  for (const b of org) {
+    if (b.leader1?.name) l1++;
+    if (b.subLeaders) l1 += b.subLeaders.length;
+    for (const s of b.sites) {
+      for (const x of (s.leader2||[])) { if (x.empNo && !seen2.has(x.empNo)) { seen2.add(x.empNo); l2++; } else if (!x.empNo) l2++; }
+      for (const x of (s.leader3||[])) { if (x.empNo && !seen3.has(x.empNo)) { seen3.add(x.empNo); l3++; } else if (!x.empNo) l3++; }
+    }
+  }
+  return { l1, l2, l3 };
+}
+function countSitesByKubun(b) {
+  const o = {국내현장:0, 국내지사:0, 해외현장:0, 해외지사:0, 해외법인:0};
+  for (const s of b.sites) if (o.hasOwnProperty(s.kubun)) o[s.kubun]++;
+  return o;
+}
+
+// ---------- App ----------
+function App() {
+  const [org, setOrg] = useState(loadOrg);
+  const [activeBonbu, setActiveBonbu] = useState('ALL');
+  const [activeKubun, setActiveKubun] = useState('전체');
+  const [query, setQuery] = useState('');
+  const [view, setView] = useState('table');
+  const [editMode, setEditMode] = useState(false);
+  const [showExclusions, setShowExclusions] = useState(false);
+  const headerRef = useRef(null);
+
+  useEffect(() => { saveOrg(org); }, [org]);
+
+  useEffect(() => {
+    const update = () => {
+      const h = headerRef.current?.getBoundingClientRect().height || 78;
+      document.documentElement.style.setProperty('--header-h', Math.round(h) + 'px');
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    if (headerRef.current) ro.observe(headerRef.current);
+    window.addEventListener('resize', update);
+    return () => { ro.disconnect(); window.removeEventListener('resize', update); };
+  }, []);
+
+  const stats = useMemo(() => {
+    const lc = countLeaders(org);
+    return {
+      bonbu: org.length,
+      sites: org.reduce((a,b)=>a+countSites(b),0),
+      members: org.reduce((a,b)=>a+countMembers(b),0),
+      l1: lc.l1, l2: lc.l2, l3: lc.l3,
+    };
+  }, [org]);
+
+  const filtered = useMemo(() => {
+    let data = org;
+    if (activeBonbu !== 'ALL') data = data.filter(b => b.bonbu === activeBonbu);
+    const q = query.trim().toLowerCase();
+    return data.map(b => {
+      let sites = b.sites;
+      if (activeKubun !== '전체') sites = sites.filter(s => s.kubun === activeKubun);
+      if (q) {
+        sites = sites.filter(s => {
+          if (s.site.toLowerCase().includes(q)) return true;
+          if (s.originalSite && s.originalSite.toLowerCase().includes(q)) return true;
+          if ((s.leader2||[]).some(x => x.name?.toLowerCase().includes(q))) return true;
+          if ((s.leader3||[]).some(x => x.name?.toLowerCase().includes(q))) return true;
+          return false;
+        });
+      }
+      if (q && b.leader1?.name?.toLowerCase().includes(q)) return { ...b, sites: b.sites };
+      if (q && (b.subLeaders||[]).some(sl => sl.name?.toLowerCase().includes(q))) return { ...b, sites: b.sites };
+      if (q && b.bonbu.toLowerCase().includes(q)) return { ...b, sites: b.sites };
+      return { ...b, sites };
+    }).filter(b => b.sites.length > 0);
+  }, [activeBonbu, activeKubun, query, org]);
+
+  const updateOrg = useCallback((mutator) => {
+    setOrg(prev => {
+      const copy = JSON.parse(JSON.stringify(prev));
+      mutator(copy);
+      return copy;
+    });
+  }, []);
+
+  const handleReset = () => {
+    if (confirm('모든 편집 내용을 초기화하시겠습니까?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      setOrg(JSON.parse(JSON.stringify(ORG_INITIAL)));
+    }
+  };
+
+  return (
+    <div className={'app ' + (editMode ? 'edit-mode' : '')}>
+      <Sidebar org={org} active={activeBonbu} onPick={setActiveBonbu} stats={stats} />
+      <main className="main">
+        <Header
+          headerRef={headerRef}
+          query={query} setQuery={setQuery}
+          view={view} setView={setView}
+          activeKubun={activeKubun} setActiveKubun={setActiveKubun}
+          stats={stats} active={activeBonbu}
+          editMode={editMode} setEditMode={setEditMode}
+          onReset={handleReset}
+          onShowExclusions={() => setShowExclusions(true)}
+          org={org}
+        />
+        <div className="content">
+          {view === 'table' ? (
+            <TableView org={filtered} highlight={query.trim().toLowerCase()} editMode={editMode} updateOrg={updateOrg} />
+          ) : (
+            <GridView org={filtered} highlight={query.trim().toLowerCase()} />
+          )}
+          {filtered.length === 0 && <div className="empty">검색 결과가 없습니다.</div>}
+        </div>
+        {showExclusions && <ExclusionsModal onClose={() => setShowExclusions(false)} />}
+      </main>
+    </div>
+  );
+}
+
+// ---------- Sidebar ----------
+function Sidebar({ org, active, onPick, stats }) {
+  return (
+    <aside className="sidebar">
+      <div className="brand">
+        <div className="brand-mark">現</div>
+        <div className="brand-text">
+          <div className="brand-title">현장 리더 명단</div>
+          <div className="brand-sub">2026-05-18 기준 · 현장 {stats.members.toLocaleString()}명</div>
+        </div>
+      </div>
+      <nav className="nav">
+        <button className={'nav-item ' + (active === 'ALL' ? 'is-active' : '')} onClick={() => onPick('ALL')}>
+          <span className="nav-label">전체 현장</span>
+          <span className="nav-count">{stats.sites}개</span>
+        </button>
+        <div className="nav-divider" />
+        {org.map(b => (
+          <button key={b.bonbu} className={'nav-item ' + (active === b.bonbu ? 'is-active' : '')} onClick={() => onPick(b.bonbu)}>
+            <span className="nav-label">{b.bonbu}</span>
+            <span className="nav-count">{countSites(b)}개</span>
+          </button>
+        ))}
+      </nav>
+      <div className="legend">
+        <div className="legend-title">범례</div>
+        <div className="legend-row"><span className="chip chip-l1">L1</span><span>본부장 · 사업부장</span></div>
+        <div className="legend-row"><span className="chip chip-l2">L2</span><span>PD · 실장 (본부 매칭)</span></div>
+        <div className="legend-row"><span className="chip chip-l3">L3</span><span>현장소장·실장·지사장·단장·담당 등</span></div>
+        <div className="legend-row" style={{marginTop: 6}}><span className="kubun-chip kubun-국내현장">국내</span><span>국내현장·지사</span></div>
+        <div className="legend-row"><span className="kubun-chip kubun-해외현장">해외</span><span>해외현장·지사·법인</span></div>
+      </div>
+    </aside>
+  );
+}
+
+// ---------- Header ----------
+function Header({ headerRef, query, setQuery, view, setView, activeKubun, setActiveKubun, stats, active, editMode, setEditMode, onReset, onShowExclusions, org }) {
+  return (
+    <header className="header" ref={headerRef}>
+      <div className="header-l">
+        <div className="crumb">
+          <span>현장 조직</span>
+          <span className="crumb-sep">/</span>
+          <span className="crumb-current">{active === 'ALL' ? '전체 현장' : active}</span>
+          {activeKubun !== '전체' && <>
+            <span className="crumb-sep">/</span>
+            <span className="crumb-current">{activeKubun}</span>
+          </>}
+        </div>
+        <div className="title-row">
+          <div className="title">현장별 리더 1·2·3</div>
+          <div className="title-stats">
+            <span className="title-stat"><span>본부/사업부</span><span className="title-stat-value">{stats.bonbu}</span></span>
+            <span className="title-stat-sep">·</span>
+            <span className="title-stat"><span>근무지</span><span className="title-stat-value">{stats.sites}</span></span>
+            <span className="title-stat-sep">·</span>
+            <span className="title-stat tone-l1"><span>리더 1</span><span className="title-stat-value">{stats.l1}</span></span>
+            <span className="title-stat-sep">·</span>
+            <span className="title-stat tone-l2"><span>리더 2</span><span className="title-stat-value">{stats.l2}</span></span>
+            <span className="title-stat-sep">·</span>
+            <span className="title-stat tone-l3"><span>리더 3</span><span className="title-stat-value">{stats.l3}</span></span>
+            <span className="title-stat-sep">·</span>
+            <span className="title-stat"><span>현장 직원</span><span className="title-stat-value">{stats.members.toLocaleString()}</span></span>
+          </div>
+        </div>
+      </div>
+      <div className="header-r">
+        <div className="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input type="text" placeholder="현장명·리더·본부 검색" value={query} onChange={e => setQuery(e.target.value)} />
+          {query && <button className="search-clear" onClick={() => setQuery('')} aria-label="clear">×</button>}
+        </div>
+        <div className="kubun-toggle">
+          {KUBUN_LIST.map(k => (
+            <button key={k} className={activeKubun === k ? 'is-active' : ''} onClick={() => setActiveKubun(k)}>{k}</button>
+          ))}
+        </div>
+        <div className="view-toggle">
+          <button className={view === 'table' ? 'is-active' : ''} onClick={() => setView('table')}>표</button>
+          <button className={view === 'grid' ? 'is-active' : ''} onClick={() => setView('grid')}>카드</button>
+        </div>
+        <button className="btn-ghost" onClick={onShowExclusions}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
+          제외항목
+        </button>
+        <button className={'btn-ghost ' + (editMode ? 'is-on' : '')} onClick={() => setEditMode(v => !v)}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z" /></svg>
+          {editMode ? '편집 종료' : '편집'}
+        </button>
+        {editMode && (
+          <button className="btn-ghost btn-warn" onClick={onReset} title="모든 편집 내용 초기화">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+            초기화
+          </button>
+        )}
+        <button className="btn-primary" onClick={() => exportExcel(org)}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /><path d="M12 15V3" /></svg>
+          엑셀 다운로드
+        </button>
+      </div>
+    </header>
+  );
+}
+
+// ---------- Editable ----------
+function Editable({ value, onChange, editMode, placeholder, multi }) {
+  const ref = useRef(null);
+  const [editing, setEditing] = useState(false);
+  if (!editMode) return <>{value || placeholder || ''}</>;
+  return (
+    <span
+      ref={ref}
+      contentEditable
+      suppressContentEditableWarning
+      className={'editable ' + (editing ? 'is-editing' : '') + (!value ? ' is-empty' : '')}
+      data-placeholder={placeholder || ''}
+      onFocus={() => setEditing(true)}
+      onBlur={(e) => {
+        setEditing(false);
+        const t = e.currentTarget.innerText.trim();
+        if (t !== (value || '')) onChange(t);
+      }}
+      onKeyDown={(e) => {
+        if (!multi && e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur(); }
+        if (e.key === 'Escape') { e.currentTarget.innerText = value || ''; e.currentTarget.blur(); }
+      }}
+    >
+      {value || ''}
+    </span>
+  );
+}
+
+// ---------- Hi ----------
+function Hi({ text, q }) {
+  if (!q || !text) return <>{text}</>;
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx === -1) return <>{text}</>;
+  return <>{text.slice(0, idx)}<mark>{text.slice(idx, idx + q.length)}</mark>{text.slice(idx + q.length)}</>;
+}
+
+// ---------- Leader stack cell ----------
+function LeaderStack({ leaders, kind, q, fallback = '공석', editMode, onChange }) {
+  if (!leaders || leaders.length === 0) {
+    return (
+      <span className="leader-empty">
+        <span className="leader-empty-tag">{fallback}</span>
+      </span>
+    );
+  }
+  return (
+    <div className="leaders-stack">
+      {leaders.map((l, i) => (
+        <div key={i} className="leader">
+          <span className={'leader-dot dot-' + kind} />
+          <div className="leader-text">
+            <div className="leader-name">
+              <Hi text={l.name} q={q} />
+              {l.title && <span className="leader-title-tag">{l.title}</span>}
+            </div>
+            {l.rank && <div className="leader-rank">{l.rank}{l.dept && l.dept !== l.title && kind === 'l2' ? ` · ${l.dept}` : ''}</div>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------- L1 lanes (sub-leader branches) ----------
+function L1Cell({ bonbu, totalRows, q, editMode, trRefs }) {
+  const subs = bonbu.subLeaders || [];
+  // For sub-leaders without a specific scope, span all rows
+  return (
+    <div className={'l1-lanes ' + (subs.length === 0 ? 'l1-lanes-solo' : '')}>
+      <div className="lane-main">
+        {bonbu.leader1 ? (
+          <div className="leader">
+            <span className="leader-dot dot-l1" />
+            <div className="leader-text">
+              <div className="leader-name">
+                <Hi text={bonbu.leader1.name} q={q} />
+                <span className="leader-title-tag">{bonbu.leader1.title}</span>
+              </div>
+              <div className="leader-rank">{bonbu.leader1.rank}</div>
+            </div>
+          </div>
+        ) : <span className="leader-empty"><span className="leader-empty-tag">공석</span></span>}
+      </div>
+      {subs.map((sl, j) => (
+        <div key={j} className="lane-branch" style={{ top: '0px', height: '100%' }}>
+          <div className="leader">
+            <span className="leader-dot dot-l1" />
+            <div className="leader-text">
+              <div className="leader-name">
+                <Hi text={sl.name} q={q} />
+                <span className="leader-title-tag">{sl.title}</span>
+              </div>
+              <div className="leader-rank">{sl.rank}</div>
+              {sl.dept && <div className="sub-leader-note">{sl.dept}</div>}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------- Table view ----------
+function TableView({ org, highlight, editMode, updateOrg }) {
+  return (
+    <div className="table-wrap">
+      <table className="org-table">
+        <colgroup>
+          <col style={{ width: '15%' }} />
+          <col style={{ width: '26%' }} />
+          <col style={{ width: '6%' }} />
+          <col style={{ width: '15%' }} />
+          <col style={{ width: '18%' }} />
+          <col style={{ width: '20%' }} />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>본부 / 사업부</th>
+            <th>근무지</th>
+            <th className="th-center">인원</th>
+            <th><span className="th-chip chip-l1">리더 1</span><span className="th-sub">본부장 · 사업부장</span></th>
+            <th><span className="th-chip chip-l2">리더 2</span><span className="th-sub">PD · 실장 (본부 매칭)</span></th>
+            <th><span className="th-chip chip-l3">리더 3</span><span className="th-sub">현장소장·실장·지사장·단장·담당 등</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {org.map(b => <BonbuRows key={b.bonbu} b={b} highlight={highlight} editMode={editMode} updateOrg={updateOrg} />)}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function BonbuRows({ b, highlight, editMode, updateOrg }) {
+  const totalRows = Math.max(b.sites.length, 1);
+  const trRefs = useRef([]);
+  trRefs.current.length = totalRows;
+
+  const setSiteLeader = (siteIdx, leaderKey, leaderIdx, field, value) => updateOrg(o => {
+    const bb = o.find(x => x.bonbu === b.bonbu);
+    if (!bb.sites[siteIdx][leaderKey][leaderIdx]) bb.sites[siteIdx][leaderKey][leaderIdx] = {name: '', rank: ''};
+    bb.sites[siteIdx][leaderKey][leaderIdx][field] = value;
+  });
+
+  if (b.sites.length === 0) {
+    return (
+      <tr className="bonbu-start">
+        <td className="cell-bonbu"><BonbuCellContent b={b} q={highlight} /></td>
+        <td colSpan={2} className="cell-empty">현장 데이터 없음</td>
+        <td><L1Cell bonbu={b} totalRows={1} q={highlight} editMode={editMode} trRefs={trRefs} /></td>
+        <td colSpan={2} className="cell-empty">—</td>
+      </tr>
+    );
+  }
+
+  return (
+    <>
+      {b.sites.map((s, i) => {
+        const isFirst = i === 0;
+        return (
+          <tr key={i} ref={el => trRefs.current[i] = el} className={isFirst ? 'bonbu-start' : ''}>
+            {isFirst && (
+              <td className="cell-bonbu" rowSpan={totalRows}>
+                <BonbuCellContent b={b} q={highlight} />
+              </td>
+            )}
+            <td className="cell-site">
+              <div className="site-row">
+                <div className="site-name">
+                  <Hi text={s.site} q={highlight} />
+                </div>
+                <div className="site-meta">
+                  <span className={'kubun-chip kubun-' + s.kubun}>{s.kubun}</span>
+                </div>
+                {s.bonbuBreakdown && Object.keys(s.bonbuBreakdown).length > 1 && (
+                  <div className="site-bonbu-breakdown">
+                    {Object.entries(s.bonbuBreakdown)
+                      .sort((a,c)=>c[1]-a[1])
+                      .map(([bn, cnt], j, arr) => (
+                        <span key={bn} className="sb-item">
+                          {bn === b.bonbu
+                            ? <strong style={{color: 'var(--text-2)'}}>{bn} {cnt}</strong>
+                            : <span>{bn} {cnt}</span>
+                          }
+                          {j < arr.length - 1 && <span className="sb-sep"> · </span>}
+                        </span>
+                      ))
+                    }
+                  </div>
+                )}
+              </div>
+            </td>
+            <td className={'cell-count' + ((s.memberCount || 0) <= 4 ? ' is-small' : '')}>
+              <span className="member-count">{s.memberCount || 0}</span>
+            </td>
+            {isFirst && (
+              <td className="cell-l1" rowSpan={totalRows}>
+                <L1Cell bonbu={b} totalRows={totalRows} q={highlight} editMode={editMode} trRefs={trRefs} />
+              </td>
+            )}
+            <td>
+              <LeaderStack leaders={s.leader2} kind="l2" q={highlight} fallback="미지정" />
+            </td>
+            <td>
+              <LeaderStack leaders={s.leader3} kind="l3" q={highlight} fallback="공석" />
+            </td>
+          </tr>
+        );
+      })}
+    </>
+  );
+}
+
+function BonbuCellContent({ b, q }) {
+  const sites = countSites(b);
+  const mem = countMembers(b);
+  const st = b.stats || { l2: 0, l3: 0 };
+  const kc = countSitesByKubun(b);
+  return (
+    <div className="bonbu-cell">
+      <div className="bonbu-name"><Hi text={b.bonbu} q={q} /></div>
+      <div className="bonbu-meta">
+        <span>{sites}개 현장</span>
+        <span className="dot-sep">·</span>
+        <span>{mem}명</span>
+      </div>
+      <div className="bonbu-kubun-counts">
+        {Object.entries(kc).map(([k, n]) => n > 0 && (
+          <div key={k} className="bonbu-kubun-row">
+            <span className={'kubun-chip kubun-' + k}>{k}</span>
+            <span>{n}</span>
+          </div>
+        ))}
+      </div>
+      <div className="bonbu-breakdown" style={{marginTop: 8}}>
+        <span className="bb-l2">L2 {st.l2 ?? 0}</span>
+        <span className="bb-sep">·</span>
+        <span className="bb-l3">L3 {st.l3 ?? 0}</span>
+        {typeof st.vacL3 === 'number' && st.vacL3 > 0 && <>
+          <span className="bb-sep">·</span>
+          <span style={{color: 'var(--muted)'}}>공석 {st.vacL3}</span>
+        </>}
+      </div>
+    </div>
+  );
+}
+
+// ---------- Grid View ----------
+function GridView({ org, highlight }) {
+  return (
+    <div className="grid-view">
+      {org.map(b => (
+        <section key={b.bonbu} className="card-bonbu">
+          <div className="card-bonbu-head">
+            <div>
+              <div className="card-bonbu-title"><Hi text={b.bonbu} q={highlight} /></div>
+              <div className="card-bonbu-meta">{countSites(b)}개 현장 · {countMembers(b)}명</div>
+            </div>
+            <div className="card-bonbu-l1">
+              <div className="card-l1-label">리더 1</div>
+              {b.leader1 ? (
+                <div className="card-l1-name"><Hi text={b.leader1.name} q={highlight} /> <span className="card-l1-rank">{b.leader1.title} · {b.leader1.rank}</span></div>
+              ) : <div className="card-l1-name muted">—</div>}
+              {(b.subLeaders||[]).map((sl, j) => (
+                <div className="card-l1-name" key={j} style={{ marginTop: 4 }}>
+                  <Hi text={sl.name} q={highlight} /> <span className="card-l1-rank">{sl.title} · {sl.rank}</span>
+                  {sl.dept && <div className="card-sub-note">{sl.dept}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="card-sites">
+            {b.sites.map((s, i) => (
+              <div key={i} className="card-site">
+                <div className="card-site-head">
+                  <div className="card-site-name"><Hi text={s.site} q={highlight} /></div>
+                  <div className="card-site-meta">
+                    <span className={'kubun-chip kubun-' + s.kubun}>{s.kubun}</span>
+                  </div>
+                </div>
+                <span className="card-site-cnt">{s.memberCount || 0}명</span>
+                <div className="card-leaders">
+                  <div>
+                    <div className="card-leader-col-title">리더 2</div>
+                    {(s.leader2||[]).length === 0 ? (
+                      <div className="card-leader-row muted"><span className="dot dot-l2" />미지정</div>
+                    ) : (
+                      (s.leader2||[]).map((l, j) => (
+                        <div key={j} className="card-leader-row">
+                          <span className="dot dot-l2" />
+                          <span className="l-name"><Hi text={l.name} q={highlight} /></span>
+                          {l.rank && <span className="l-rank">{l.rank}</span>}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div>
+                    <div className="card-leader-col-title">리더 3</div>
+                    {(s.leader3||[]).length === 0 ? (
+                      <div className="card-leader-row muted"><span className="dot dot-l3" />공석</div>
+                    ) : (
+                      (s.leader3||[]).map((l, j) => (
+                        <div key={j} className="card-leader-row">
+                          <span className="dot dot-l3" />
+                          <span className="l-name"><Hi text={l.name} q={highlight} /></span>
+                          {l.title && <span className="l-rank">{l.title}</span>}
+                          {l.rank && <span className="l-rank">· {l.rank}</span>}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+// ---------- Exclusions Modal ----------
+function ExclusionsModal({ onClose }) {
+  const [active, setActive] = useState(EXCLUSION_KEYS[0]);
+  const list = EXCLUSION_DATA[active] || [];
+  const meta = EXCLUSION_META[active] || {};
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const groups = {};
+  for (const k of EXCLUSION_KEYS) {
+    const g = (EXCLUSION_META[k]?.group) || '기타';
+    if (!groups[g]) groups[g] = [];
+    groups[g].push(k);
+  }
+
+  const totalExcluded = EXCLUSION_KEYS.reduce((a, k) => a + (EXCLUSION_DATA[k]?.length || 0), 0);
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-head">
+          <div>
+            <div className="modal-title">현장 리더 명단에서 제외된 항목</div>
+            <div className="modal-sub">현장 소속(국내·해외 현장/지사/법인) 직원 중 직급이 고문역·자문역·사외이사이거나 근무지가 비상근인 인원입니다. 총 {totalExcluded}명.</div>
+          </div>
+          <button className="modal-close" onClick={onClose} aria-label="close">×</button>
+        </div>
+        <div className="modal-body">
+          <div className="modal-tabs">
+            {Object.entries(groups).map(([g, keys]) => (
+              <div className="modal-tab-group" key={g}>
+                <div className="modal-tab-group-label">{g}</div>
+                {keys.map(k => {
+                  const n = (EXCLUSION_DATA[k] || []).length;
+                  return (
+                    <button key={k} className={'modal-tab ' + (active === k ? 'is-active' : '')} onClick={() => setActive(k)}>
+                      <span className="modal-tab-name">{k}</span>
+                      <span className="modal-tab-count">{n || '—'}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          <div className="modal-content">
+            <div className="modal-section-head">
+              <h3 className="modal-section-title">{active}</h3>
+              <div className="modal-section-meta">{list.length}명</div>
+            </div>
+            {meta.criteria && <p className="modal-section-note">대상 기준: {meta.criteria} · 근무지구분 = 국내현장·해외현장·국내지사·해외지사·해외법인</p>}
+            {list.length === 0 ? (
+              <div className="modal-empty">
+                <div className="modal-empty-icon">—</div>
+                <div>해당 기준에 부합하는 현장 소속 직원이 없습니다.</div>
+                <div className="modal-empty-sub">현재 기준 일치 인원 없음 (2026-05-18)</div>
+              </div>
+            ) : (
+              <table className="modal-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: 50 }}>#</th>
+                    <th>성명</th>
+                    <th>직급</th>
+                    <th>직책</th>
+                    <th>근무지구분</th>
+                    <th>소속</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.map((p, i) => (
+                    <tr key={i}>
+                      <td className="modal-tnum">{i + 1}</td>
+                      <td className="modal-tname">{p.name}</td>
+                      <td>{p.grade || p.rank || '—'}</td>
+                      <td>{p.title || '—'}</td>
+                      <td><span className={'kubun-chip kubun-' + p.location}>{p.location}</span></td>
+                      <td className="modal-tdept">{p.dept || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Excel Export ----------
+async function exportExcel(org) {
+  if (!window.XLSX) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  const XLSX = window.XLSX;
+
+  const fmtLeader = (l) => l ? `${l.name}${l.title ? ' ('+l.title+')' : ''}${l.rank ? ' · '+l.rank : ''}` : '';
+  const fmtLeaders = (arr) => (arr||[]).map(fmtLeader).join('\n') || '공석';
+
+  const aoa = [['본부 / 사업부', '리더 1', '근무지', '근무지구분', '인원', '리더 2', '리더 3']];
+  const merges = [];
+  let row = 1;
+  for (const b of org) {
+    const bonbuStart = row;
+    let l1 = b.leader1 ? `${b.leader1.name} (${b.leader1.title}, ${b.leader1.rank})` : '';
+    if (b.subLeaders) for (const sl of b.subLeaders) l1 += (l1 ? '\n' : '') + `${sl.name} (${sl.title}, ${sl.rank})`;
+    if (!l1) l1 = '—';
+    if (b.sites.length === 0) {
+      aoa.push([b.bonbu, l1, '—', '—', 0, '—', '—']);
+      row++;
+      continue;
+    }
+    b.sites.forEach((s, i) => {
+      aoa.push([
+        i === 0 ? b.bonbu : '',
+        i === 0 ? l1 : '',
+        s.site,
+        s.kubun,
+        s.memberCount || 0,
+        fmtLeaders(s.leader2),
+        fmtLeaders(s.leader3),
+      ]);
+      row++;
+    });
+    if (b.sites.length > 1) {
+      merges.push({ s: { r: bonbuStart, c: 0 }, e: { r: bonbuStart + b.sites.length - 1, c: 0 } });
+      merges.push({ s: { r: bonbuStart, c: 1 }, e: { r: bonbuStart + b.sites.length - 1, c: 1 } });
+    }
+  }
+  const total = org.reduce((a, b) => a + countMembers(b), 0);
+  aoa.push([]);
+  aoa.push(['합계', '', '', '', total, '', '']);
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!merges'] = merges;
+  ws['!cols'] = [{ wch: 22 }, { wch: 32 }, { wch: 36 }, { wch: 10 }, { wch: 8 }, { wch: 28 }, { wch: 32 }];
+
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; R++) {
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const addr = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[addr]) ws[addr] = { t: 's', v: '' };
+      const cell = ws[addr];
+      cell.s = {
+        alignment: { vertical: 'top', horizontal: C === 4 ? 'center' : 'left', wrapText: true },
+        border: {
+          top: { style: 'thin', color: { rgb: 'D5D1C5' } }, bottom: { style: 'thin', color: { rgb: 'D5D1C5' } },
+          left: { style: 'thin', color: { rgb: 'D5D1C5' } }, right: { style: 'thin', color: { rgb: 'D5D1C5' } },
+        },
+        font: { name: 'Pretendard', sz: 10 },
+      };
+      if (R === 0) {
+        cell.s.font = { name: 'Pretendard', sz: 10, bold: true, color: { rgb: 'FFFFFF' } };
+        cell.s.fill = { fgColor: { rgb: '2D2A26' }, patternType: 'solid' };
+        cell.s.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
+      } else if (C === 0) {
+        cell.s.fill = { fgColor: { rgb: 'F5F4EF' }, patternType: 'solid' };
+        cell.s.font = { name: 'Pretendard', sz: 10, bold: true };
+      } else if (C === 1) {
+        cell.s.fill = { fgColor: { rgb: 'FDFCFA' }, patternType: 'solid' };
+      }
+    }
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '현장 리더 명단');
+
+  // Exclusions sheet
+  const exAoa = [['제외 카테고리', '성명', '직급', '직책', '근무지구분', '소속']];
+  for (const cat of EXCLUSION_KEYS) {
+    const arr = EXCLUSION_DATA[cat] || [];
+    if (arr.length === 0) {
+      exAoa.push([cat, '(해당 없음)', '', '', '', '']);
+    } else {
+      arr.forEach((p, i) => exAoa.push([i === 0 ? cat : '', p.name, p.grade || p.rank || '', p.title || '', p.location || '', p.dept || '']));
+    }
+  }
+  const exWs = XLSX.utils.aoa_to_sheet(exAoa);
+  exWs['!cols'] = [{ wch: 20 }, { wch: 16 }, { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 40 }];
+  XLSX.utils.book_append_sheet(wb, exWs, '제외 항목');
+
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
+  const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '현장 리더 명단.xlsx';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
